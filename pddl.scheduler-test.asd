@@ -14,5 +14,5 @@
 	       :pddl-test)
   :components ((:module "t"
                 :components
-                ((:file "pddl.scheduler"))))
+                ((:file :package))))
   :perform (load-op :after (op c) (asdf:clear-system c)))

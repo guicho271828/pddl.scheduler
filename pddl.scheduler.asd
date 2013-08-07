@@ -12,6 +12,7 @@
   :author ""
   :license ""
   :depends-on (:pddl
+	       :plan-optimizer
                :guicho-utilities
                :iterate
                :alexandria
@@ -22,7 +23,8 @@
                :metatilities)
   :components ((:module "src"
                 :components
-                ((:file "pddl.scheduler"))))
+                ((:file :package)
+		 (:file :minimum-slack))))
   :description ""
   :long-description
   #.(with-open-file (stream (merge-pathnames

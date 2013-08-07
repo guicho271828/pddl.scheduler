@@ -5,6 +5,9 @@
 (in-package :cl-user)
 (defpackage pddl.scheduler-test
   (:use :cl
+	:pddl-test
+	:pddl
+	:plan-optimizer
         :pddl.scheduler
 	:optima
 	:fiveam)
