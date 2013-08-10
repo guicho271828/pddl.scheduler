@@ -12,7 +12,8 @@
 	:alexandria
 	:optima
 	:cl-syntax
-	:anaphora))
+	:anaphora)
+  (:shadowing-import-from :iterate :maximize :minimize))
 (in-package :pddl.scheduler)
 
 (use-syntax :annot)
