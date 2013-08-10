@@ -79,10 +79,57 @@
 
 
 @export
-(defun %collect-timed-actions (plan)
-  (iter (for action in-vector (actions plan))
-	(for cost in-vector (%get-costs plan))
-	(collecting (timed-action action cost))))
+(defun %build-schedule (plan)
+  @type pddl-plan plan
+  (let ((cost 0)
+	(timed-states
+	 (list (timed-state
+		(mapcar #'shallow-copy
+			(init (problem plan)))
+		0)))
+	(aactions
+	 (list (timed-action
+		(first-elt (actions plan))
+		0 0 0)))) ;; oldest action appears first
+    (with-simulating-plan (env (pddl-environment :plan plan))
+      (pprint-logical-block (t
+			     nil :per-line-prefix 
+			     (format nil "index: ~a " (index env)))
+	(let* ((new-cost (cost env))
+	       (duration (- new-cost cost))
+	       (aa (elt (actions plan) (index env))))
+	  (print aa)
+	  (print (action (domain aa) aa))
+	  (write-char #\Newline)
+	  (iter (for aa-rest first aactions
+		     then (cdr aa-rest))
+		(for i from 0)
+		(when (endp aa-rest) (terminate))
+		(for old-a = (car aa-rest))
+		(for states = (timed-action-successor-states old-a))
+		(when (and (appliable states aa)
+			   (or (null (second aa-rest))
+			       (not (conflict-p
+				     (timed-action-action (second aa-rest))
+				     aa))))
+		  (format t "~%inserting new state after ~ath action"
+			  i)
+		  (push (timed-action
+			 aa
+			 (timed-action-end old-a)
+			 duration
+			 (+ (timed-action-end old-a) duration)		       
+			 (apply-actual-action aa states))
+			(cdr aa-rest))
+		  (leave))
+		(finally
+		 ;; action is supposed to be inserted to the list
+		 ;; because the last state always matches the precondition
+		 (warn "failed to insert the action to the list!")))
+	  (format t "current action length: ~a~%" (length aactions))
+	  (setf cost new-cost))))
+    aactions))
+    
 
 ;; (defmethod reschedule ((plan pddl-plan)
 ;; 		       (algorhythm (eql :minimum-slack)))
