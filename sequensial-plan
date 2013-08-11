@@ -1,0 +1,141 @@
+0|*(INIT-ACTION)
+0|*(AC* SLIDE-BASE-IN (B3 CARRY-IN TABLE-IN))
+0|--|*(AC* MOVE-ARM (ARM TABLE-OUT TRAY-A))
+0   |*(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A))
+0   |-----|*(AC* MOVE-ARM (ARM TRAY-A TABLE-IN))
+0         |----|*(AC* ASSEMBLE-WITH-ARM
+0         |----|      (PART-A ATTATCH-A NOTHING-DONE B3 ARM TABLE-IN))
+0              ||*(AC* EJECT-BASE (B3 ARM TABLE-IN))
+0               |---------------|*(AC* MOVE-ARM (ARM TABLE-IN MACHINE-A))
+0                               ||*(AC* SET-BASE (B3 ARM MACHINE-A))
+0                                |----|*(AC* ASSEMBLE-WITH-MACHINE
+0                                |----|      (B3 MACHINE-A SCREW-A
+0                                |----|       ATTATCH-A))
+0                                     ||*(AC* EJECT-BASE
+0                                     ||      (B3 ARM MACHINE-A))
+0                                      |---|*(AC* MOVE-ARM
+0                                      |---|      (ARM MACHINE-A TABLE2))
+0                                          |*(AC* SLIDE-BASE-IN
+0                                          |      (B2 CARRY-IN TABLE-IN))
+0                                          ||*(AC* SET-BASE
+0                                          ||      (B3 ARM TABLE2))
+0                                           |-----|*(AC* MOVE-ARM
+0                                           |-----|      (ARM TABLE2
+0                                           |-----|       TRAY-B))
+0                                                 |*(AC* PICKUP-COMPONENT
+0                                                 |      (PART-B ARM
+0                                                 |       TRAY-B))
+0                                                 |-----|*(AC* MOVE-ARM
+0                                                 |-----|      (ARM TRAY-B
+0                                                 |-----|       TABLE2))
+50     |----|*(AC* ASSEMBLE-WITH-ARM
+50     |----|      (PART-B ATTATCH-B SCREW-A B3 ARM TABLE2))
+50          |--|*(AC* MOVE-ARM (ARM TABLE2 TRAY-C))
+50             |*(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C))
+50             |--|*(AC* MOVE-ARM (ARM TRAY-C TABLE2))
+50                |----|*(AC* ASSEMBLE-WITH-ARM
+50                |----|      (PART-C ATTATCH-C ATTATCH-B B3 ARM TABLE2))
+50                     ||*(AC* EJECT-BASE (B3 ARM TABLE2))
+50                      |-----|*(AC* MOVE-ARM (ARM TABLE2 MACHINE-B))
+50                            ||*(AC* SET-BASE (B3 ARM MACHINE-B))
+50                             |----|*(AC* ASSEMBLE-WITH-MACHINE
+50                             |----|      (B3 MACHINE-B SCREW-C
+50                             |----|       ATTATCH-C))
+50                                  ||*(AC* EJECT-BASE (B3 ARM MACHINE-B))
+50                                   |--------------|*(AC* MOVE-ARM
+50                                   |--------------|      (ARM MACHINE-B
+50                                   |--------------|       TABLE-OUT))
+100||*(AC* SET-BASE (B3 ARM TABLE-OUT))
+100 |*(AC* SLIDE-BASE-OUT (B3 TABLE-OUT CARRY-OUT))
+100 |--|*(AC* MOVE-ARM (ARM TABLE-OUT TRAY-A))
+100    |*(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A))
+100    |-----|*(AC* MOVE-ARM (ARM TRAY-A TABLE-IN))
+100          |----|*(AC* ASSEMBLE-WITH-ARM
+100          |----|      (PART-A ATTATCH-A NOTHING-DONE B2 ARM TABLE-IN))
+100               ||*(AC* EJECT-BASE (B2 ARM TABLE-IN))
+100                |*(AC* SLIDE-BASE-IN (B1 CARRY-IN TABLE-IN))
+100                |---------------|*(AC* MOVE-ARM
+100                |---------------|      (ARM TABLE-IN MACHINE-A))
+100                                ||*(AC* SET-BASE (B2 ARM MACHINE-A))
+100                                 |----|*(AC* ASSEMBLE-WITH-MACHINE
+100                                 |----|      (B2 MACHINE-A SCREW-A
+100                                 |----|       ATTATCH-A))
+100                                      ||*(AC* EJECT-BASE
+100                                      ||      (B2 ARM MACHINE-A))
+100                                       |---|*(AC* MOVE-ARM
+100                                       |---|      (ARM MACHINE-A
+100                                       |---|       TABLE2))
+100                                           ||*(AC* SET-BASE
+100                                           ||      (B2 ARM TABLE2))
+100                                            |-----|*(AC* MOVE-ARM
+100                                            |-----|      (ARM TABLE2
+100                                            |-----|       TRAY-B))
+150|*(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B))
+150|-----|*(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+150      |----|*(AC* ASSEMBLE-WITH-ARM
+150      |----|      (PART-B ATTATCH-B SCREW-A B2 ARM TABLE2))
+150           |--|*(AC* MOVE-ARM (ARM TABLE2 TRAY-C))
+150              |*(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C))
+150              |--|*(AC* MOVE-ARM (ARM TRAY-C TABLE2))
+150                 |----|*(AC* ASSEMBLE-WITH-ARM
+150                 |----|      (PART-C ATTATCH-C ATTATCH-B B2 ARM TABLE2))
+150                      ||*(AC* EJECT-BASE (B2 ARM TABLE2))
+150                       |-----|*(AC* MOVE-ARM (ARM TABLE2 MACHINE-B))
+150                             ||*(AC* SET-BASE (B2 ARM MACHINE-B))
+150                              |----|*(AC* ASSEMBLE-WITH-MACHINE
+150                              |----|      (B2 MACHINE-B SCREW-C
+150                              |----|       ATTATCH-C))
+150                                   ||*(AC* EJECT-BASE
+150                                   ||      (B2 ARM MACHINE-B))
+150                                    |--------------|*(AC* MOVE-ARM
+150                                    |--------------|      (ARM
+150                                    |--------------|       MACHINE-B
+150                                    |--------------|       TABLE-OUT))
+200 ||*(AC* SET-BASE (B2 ARM TABLE-OUT))
+200  |*(AC* SLIDE-BASE-OUT (B2 TABLE-OUT CARRY-OUT))
+200  |--|*(AC* MOVE-ARM (ARM TABLE-OUT TRAY-A))
+200     |*(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A))
+200     |-----|*(AC* MOVE-ARM (ARM TRAY-A TABLE-IN))
+200           |----|*(AC* ASSEMBLE-WITH-ARM
+200           |----|      (PART-A ATTATCH-A NOTHING-DONE B1 ARM TABLE-IN))
+200                ||*(AC* EJECT-BASE (B1 ARM TABLE-IN))
+200                 |---------------|*(AC* MOVE-ARM
+200                 |---------------|      (ARM TABLE-IN MACHINE-A))
+200                                 ||*(AC* SET-BASE (B1 ARM MACHINE-A))
+200                                  |----|*(AC* ASSEMBLE-WITH-MACHINE
+200                                  |----|      (B1 MACHINE-A SCREW-A
+200                                  |----|       ATTATCH-A))
+200                                       ||*(AC* EJECT-BASE
+200                                       ||      (B1 ARM MACHINE-A))
+200                                        |---|*(AC* MOVE-ARM
+200                                        |---|      (ARM MACHINE-A
+200                                        |---|       TABLE2))
+200                                            ||*(AC* SET-BASE
+200                                            ||      (B1 ARM TABLE2))
+200                                             |-----|*(AC* MOVE-ARM
+200                                             |-----|      (ARM TABLE2
+200                                             |-----|       TRAY-B))
+250 |*(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B))
+250 |-----|*(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+250       |----|*(AC* ASSEMBLE-WITH-ARM
+250       |----|      (PART-B ATTATCH-B SCREW-A B1 ARM TABLE2))
+250            |--|*(AC* MOVE-ARM (ARM TABLE2 TRAY-C))
+250               |*(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C))
+250               |--|*(AC* MOVE-ARM (ARM TRAY-C TABLE2))
+250                  |----|*(AC* ASSEMBLE-WITH-ARM
+250                  |----|      (PART-C ATTATCH-C ATTATCH-B B1 ARM
+250                  |----|       TABLE2))
+250                       ||*(AC* EJECT-BASE (B1 ARM TABLE2))
+250                        |-----|*(AC* MOVE-ARM (ARM TABLE2 MACHINE-B))
+250                              ||*(AC* SET-BASE (B1 ARM MACHINE-B))
+250                               |----|*(AC* ASSEMBLE-WITH-MACHINE
+250                               |----|      (B1 MACHINE-B SCREW-C
+250                               |----|       ATTATCH-C))
+250                                    ||*(AC* EJECT-BASE
+250                                    ||      (B1 ARM MACHINE-B))
+250                                     |--------------|*(AC* MOVE-ARM
+250                                     |--------------|      (ARM
+250                                     |--------------|       MACHINE-B
+250                                     |--------------|       TABLE-OUT))
+300  ||*(AC* SET-BASE (B1 ARM TABLE-OUT))
+300   |*(AC* SLIDE-BASE-OUT (B1 TABLE-OUT CARRY-OUT))
