@@ -117,7 +117,8 @@
 		  new-timed-action)
 
 	  ;; (break+ timed-states new-timed-states)
-	  (setf timed-states new-timed-states)
+	  (setf timed-states (sort new-timed-states
+				   #'< :key #'timed-state-time))
 	  (iter (for aas on aactions)
 		(when (<= (timed-state-time
 			   (timed-action-end (first aas)))
@@ -135,16 +136,14 @@
 
 (defun %insert-state-rec (aa duration rest acc)
   (match rest
-    ((list* (and ts (timed-state state time)) rest)
+    ((list* (and ts (timed-state state time)) rest2)
      (if (appliable state aa)
-	 (if rest
+	 (if rest2
 	     (%insert-state-inner
-	      aa duration (+ time duration) rest (cons ts acc))
-	     (progn
-	       ;(break+)
-	       (%insert-state-finish
-		aa nil ts duration (+ time duration) (cons ts acc))))
-	 (%insert-state-rec aa duration rest (cons ts acc))))
+	      aa duration (+ time duration) rest2 (cons ts acc))
+	     (%insert-state-finish
+	      aa duration ts (cons ts acc)))
+	 (%insert-state-rec aa duration rest2 (cons ts acc))))
     (nil (error "failed to insert the action to the list! ~%~a~%~a"
 		aa acc))))
 
@@ -152,26 +151,55 @@
   (ematch rest
     ((list* (and ts2 (timed-state state time)) rest2)
      (if (<= time end-time)
+	 ;; checks during the time span
 	 (if (appliable state aa)
 	     (if rest2
 		 (%insert-state-inner aa duration end-time rest2 (cons ts2 acc))
-		 (%insert-state-finish aa rest2 ts2 duration end-time (cons ts2 acc)))
+		 (%insert-state-finish aa duration ts2 (cons ts2 acc)))
 	     (%insert-state-rec aa duration rest2 (cons ts2 acc)))
-	 (if (appliable state aa)
-	     (%insert-state-finish aa rest2 (car acc) duration end-time (cons ts2 acc))
-	     (%insert-state-rec aa duration rest2 (cons ts2 acc)))))))
+	 ;; check the state after the time span.
+	 ;; maybe time >= end-time.
+	 (let* ((merged nil)
+		(prev (car acc))
+		(merged-next (apply-actual-action
+			      aa (timed-state-state prev)))
+		(new (timed-state
+		      aa
+		      merged-next
+		      (+ (timed-state-time prev) duration))))
+	   (push new merged)
+	   (if (every
+		(lambda (ts)
+		  (match ts
+		    ((timed-state action (state (place state)))
+		     (when (appliable merged-next action)
+		       (setf state (apply-actual-action action merged-next)
+			     merged-next state)
+		       (push ts merged)
+		       t)))) rest)
+	       ;; if the action is applicable to it, apply it to the last state
+	       (%insert-state-merge aa duration merged (car acc) new acc)
+	       (%insert-state-rec aa duration rest acc)))))))
 
-(defun %insert-state-finish (aa rest ts duration end-time acc)
-  (let ((new (timed-state
-	      aa
-	      (apply-actual-action aa (timed-state-state ts))
-	      (+ (timed-state-time ts) duration))))
+(defun %insert-state-finish (aa duration ts acc)
+  (let ((new
+	 (timed-state
+	  aa
+	  (apply-actual-action aa (timed-state-state ts))
+	  (+ (timed-state-time ts) duration))))
     (values
      (nreverse
-      (revappend rest (cons new acc)))
+      (cons new acc))
      (timed-action aa ts duration new))))
+
+(defun %insert-state-merge (aa duration merged ts new acc)
+  (values
+   (nreverse
+    (revappend merged acc))
+   (timed-action aa ts duration new)))
 
 ;; (defmethod reschedule ((plan pddl-plan)
 ;; 		       (algorhythm (eql :minimum-slack)))
   
 ;; parallel-plan : 
+
