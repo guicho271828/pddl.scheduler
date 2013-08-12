@@ -6,23 +6,12 @@
 
 (defgeneric reschedule (plan algorhythm))
 
-;; @export
-;; (defun %get-costs (plan)
-;;   (let ((cost 0)
-;; 	(costs (make-array 5 :fill-pointer 0 :adjustable t)))
-;;     (with-simulating-plan (env (pddl-environment :plan plan))
-;;       (let ((new-cost (cost env)))
-;; 	(vector-push-extend new-cost costs)
-;; 	(setf cost new-cost)))
-;;     costs))
-
 @export 'timed-action
 @export 'timed-action-action
 @export 'timed-action-start
 @export 'timed-action-duration
 @export 'timed-action-end
 @export 'timed-action-successor-state
-
 
 (defstruct (timed-action
 	     (:constructor timed-action (action 
@@ -38,40 +27,40 @@
 	     (:constructor timed-state (action state time)))
   action state time)
 
+(defparameter *truncate-width* 250)
+
 @export
-(defun print-timed-action-graphically (ta s)
+(defun print-timed-action-graphically
+    (tas &optional (s *standard-output*))
+  (dolist (ta (ensure-list tas))
+    (%print-timed-action-graphically ta s)))
+
+(defun %print-timed-action-graphically (ta s)
   (write-char #\Newline s)
   (pprint-logical-block
       (s nil
 	 :per-line-prefix
 	 (ematch ta
 	   ((timed-action (start (timed-state time)) duration)
-	    (multiple-value-bind (quotient remainder) (floor time 50)
+	    (multiple-value-bind (quotient remainder)
+		(floor time *truncate-width*)
 	      (if (plusp duration)		
 		  (format nil "~a~a|~a|" 
-			  (* quotient 50)
+			  (* quotient *truncate-width*)
 			  (make-string remainder
 				       :initial-element #\Space)
 			  (make-string (1- (timed-action-duration ta))
 				       :initial-element #\-))
 		  (format nil "~a~a|"
-			  (* quotient 50)
+			  (* quotient *truncate-width*)
 			  (make-string remainder
 				       :initial-element #\Space)))))))
-    (write (timed-action-action ta) :stream s)))
-
-;; @export
-;; (defun %collect-timed-actions (plan)
-;;   (iter (for action in-vector (actions plan))
-;; 	(for cost in-vector (%get-costs plan))
-;; 	(for pcost previous cost initially 0)
-;; 	(collecting
-;; 	 (timed-action action pcost (- cost pcost) cost))))
+    (let ((*print-pretty* nil))
+      (prin1 (timed-action-action ta) s))))
 
 (defun conflict-p (aa1 aa2)
   aa1 aa2
   nil)
-
 
 @export
 (defun %build-schedule (plan)
@@ -86,10 +75,6 @@
 	  ;; oldest action appears first
 	 (aactions (list (timed-action aa ts 0 ts))))
     (with-simulating-plan (env (pddl-environment :plan plan))
-      ;; (pprint-logical-block (*standard-output*
-      ;; 			     nil :per-line-prefix 
-      ;; 			     (format nil "index: ~a " (index env)))
-      ;;)	
       (let* ((new-cost (cost env))
 	     (duration (- new-cost cost))
 	     (aa (elt (actions plan) (1- (index env)))))
@@ -116,7 +101,6 @@
 		   (timed-action-end new-timed-action))
 		  new-timed-action)
 
-	  ;; (break+ timed-states new-timed-states)
 	  (setf timed-states (sort new-timed-states
 				   #'< :key #'timed-state-time))
 	  (iter (for aas on aactions)
@@ -134,6 +118,10 @@
 (defun %insert-state (aa duration timed-states)
   (%insert-state-rec aa duration timed-states nil))
 
+(defun remove-fst (states)
+  (remove-if (of-type 'pddl-function-state)
+	     states))
+
 (defun %insert-state-rec (aa duration rest acc)
   (match rest
     ((list* (and ts (timed-state state time)) rest2)
@@ -144,8 +132,31 @@
 	     (%insert-state-finish
 	      aa duration ts (cons ts acc)))
 	 (%insert-state-rec aa duration rest2 (cons ts acc))))
-    (nil (error "failed to insert the action to the list! ~%~a~%~a"
-		aa acc))))
+    (nil (%debug-insert-failure aa rest acc))))
+
+(defun %debug-insert-failure (aa rest acc)
+  (do-restart ((describe-checked
+		(named-lambda describer (n)
+		  (let ((state (timed-state-state (nth n (append rest acc)))))
+		    (format t "~%~w is ~:[not~;~] appliable to~%~w~
+                                  ~%because of:~%"
+			    aa (appliable state aa) (remove-fst state))
+		    (handler-bind 
+			((assignment-error (rcurry #'describe *debug-io*)))
+		      (appliable state aa))))
+		:interactive-function
+		(named-lambda reader ()
+		  (format *query-io* "~%enter a number:")
+		  (list (read *query-io*)))))
+    (let ((fn (lambda (ts) (list (timed-state-time ts)
+				 (timed-state-action ts)))))
+      (error "failed to insert the action to the list!~
+               ~%~a~
+               ~%not checked yet:~%~:{time: ~w action:~w~%~}~
+               ~%already checked:~%~:{time: ~w action:~w~%~}"
+	     aa 
+	     (mapcar fn rest)
+	     (mapcar fn acc)))))
 
 (defun %insert-state-inner (aa duration end-time rest acc)
   (ematch rest
