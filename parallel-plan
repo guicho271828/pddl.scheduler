@@ -1,0 +1,920 @@
+SCHEDULER-TEST> (print-timed-action-graphically (%build-schedule cell-assembly-anywhere-p3-3))
+
+
+Sequencial plan No.1
+(AC* SLIDE-BASE-IN (B3 CARRY-IN TABLE-IN)) 
+(ACT SLIDE-BASE-IN
+     (?BASE ?FROM ?TO)
+     (AND (PRE AT ?BASE ?FROM) (PRE CONNECTED ?FROM ?TO)
+          (NOT (PRE BASE-PRESENT ?TO)))) 
+inserted a state with no conflict.
+inserted new action with t = [0,0] ,dt = 0 .
+current action length: 2
+
+Sequencial plan No.2
+(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted new action with t = [0,0] ,dt = 0 .
+current action length: 3
+
+Sequencial plan No.3
+(AC* MOVE-ARM (ARM TRAY-A TABLE-IN)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [0,2] ,dt = 2 .
+current action length: 4
+
+Sequencial plan No.4
+(AC* ASSEMBLE-WITH-ARM (PART-A ATTATCH-A NOTHING-DONE B3 ARM TABLE-IN)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [2,20] ,dt = 18 .
+current action length: 5
+
+Sequencial plan No.5
+(AC* EJECT-BASE (B3 ARM TABLE-IN)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [20,21] ,dt = 1 .
+current action length: 6
+
+Sequencial plan No.6
+(AC* SLIDE-BASE-IN (B1 CARRY-IN TABLE-IN)) 
+(ACT SLIDE-BASE-IN
+     (?BASE ?FROM ?TO)
+     (AND (PRE AT ?BASE ?FROM) (PRE CONNECTED ?FROM ?TO)
+          (NOT (PRE BASE-PRESENT ?TO)))) 
+inserted a state with no conflict.
+inserted new action with t = [21,21] ,dt = 0 .
+current action length: 7
+
+Sequencial plan No.7
+(AC* MOVE-ARM (ARM TABLE-IN TRAY-A)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted new action with t = [21,23] ,dt = 2 .
+current action length: 8
+
+Sequencial plan No.8
+(AC* MOVE-ARM (ARM TRAY-A MACHINE-A)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [23,27] ,dt = 4 .
+current action length: 9
+
+Sequencial plan No.9
+(AC* SET-BASE (B3 ARM MACHINE-A)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [27,28] ,dt = 1 .
+current action length: 10
+
+Sequencial plan No.10
+(AC* ASSEMBLE-WITH-MACHINE (B3 MACHINE-A SCREW-A ATTATCH-A)) 
+(ACT ASSEMBLE-WITH-MACHINE
+     (?BASE ?MACHINE ?JOB ?PREV-JOB)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?MACHINE)
+          (NOT (PRE FINISHED ?JOB ?BASE)) (PRE AT ?BASE ?MACHINE)
+          (PRE DEPENDS ?PREV-JOB ?JOB) (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [28,46] ,dt = 18 .
+current action length: 11
+
+Sequencial plan No.11
+(AC* EJECT-BASE (B3 ARM MACHINE-A)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [46,47] ,dt = 1 .
+current action length: 12
+
+Sequencial plan No.12
+(AC* MOVE-ARM (ARM MACHINE-A TRAY-B)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [47,48] ,dt = 1 .
+current action length: 13
+
+Sequencial plan No.13
+(AC* MOVE-ARM (ARM TRAY-B TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [48,51] ,dt = 3 .
+current action length: 14
+
+Sequencial plan No.14
+(AC* SET-BASE (B3 ARM TABLE2)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [51,52] ,dt = 1 .
+current action length: 15
+
+Sequencial plan No.15
+(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted a state with no conflict.
+inserted new action with t = [52,52] ,dt = 0 .
+current action length: 16
+
+Sequencial plan No.16
+(AC* MOVE-ARM (ARM TRAY-B TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [52,55] ,dt = 3 .
+current action length: 17
+
+Sequencial plan No.17
+(AC* ASSEMBLE-WITH-ARM (PART-B ATTATCH-B SCREW-A B3 ARM TABLE2)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [55,68] ,dt = 13 .
+current action length: 18
+
+Sequencial plan No.18
+(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted a state with no conflict.
+inserted new action with t = [68,68] ,dt = 0 .
+current action length: 19
+
+Sequencial plan No.19
+(AC* MOVE-ARM (ARM TRAY-A TABLE-IN)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [68,70] ,dt = 2 .
+current action length: 20
+
+Sequencial plan No.20
+(AC* ASSEMBLE-WITH-ARM (PART-A ATTATCH-A NOTHING-DONE B1 ARM TABLE-IN)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [70,88] ,dt = 18 .
+current action length: 21
+
+Sequencial plan No.21
+(AC* EJECT-BASE (B1 ARM TABLE-IN)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [88,89] ,dt = 1 .
+current action length: 22
+
+Sequencial plan No.22
+(AC* SLIDE-BASE-IN (B2 CARRY-IN TABLE-IN)) 
+(ACT SLIDE-BASE-IN
+     (?BASE ?FROM ?TO)
+     (AND (PRE AT ?BASE ?FROM) (PRE CONNECTED ?FROM ?TO)
+          (NOT (PRE BASE-PRESENT ?TO)))) 
+inserted a state with no conflict.
+inserted new action with t = [89,89] ,dt = 0 .
+current action length: 23
+
+Sequencial plan No.23
+(AC* MOVE-ARM (ARM TABLE-IN TRAY-A)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted new action with t = [89,91] ,dt = 2 .
+current action length: 24
+
+Sequencial plan No.24
+(AC* MOVE-ARM (ARM TRAY-A MACHINE-A)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [91,95] ,dt = 4 .
+current action length: 25
+
+Sequencial plan No.25
+(AC* SET-BASE (B1 ARM MACHINE-A)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [95,96] ,dt = 1 .
+current action length: 26
+
+Sequencial plan No.26
+(AC* ASSEMBLE-WITH-MACHINE (B1 MACHINE-A SCREW-A ATTATCH-A)) 
+(ACT ASSEMBLE-WITH-MACHINE
+     (?BASE ?MACHINE ?JOB ?PREV-JOB)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?MACHINE)
+          (NOT (PRE FINISHED ?JOB ?BASE)) (PRE AT ?BASE ?MACHINE)
+          (PRE DEPENDS ?PREV-JOB ?JOB) (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [96,114] ,dt = 18 .
+current action length: 27
+
+Sequencial plan No.27
+(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted a state, rebasing the states t >= 96 to it.
+inserted new action with t = [96,96] ,dt = 0 .
+current action length: 28
+
+Sequencial plan No.28
+(AC* MOVE-ARM (ARM TRAY-A TABLE-IN)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state, rebasing the states t >= 96 to it.
+inserted new action with t = [96,98] ,dt = 2 .
+current action length: 29
+
+Sequencial plan No.29
+(AC* ASSEMBLE-WITH-ARM (PART-A ATTATCH-A NOTHING-DONE B2 ARM TABLE-IN)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted new action with t = [98,116] ,dt = 18 .
+current action length: 30
+
+Sequencial plan No.30
+(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted a state with no conflict.
+inserted new action with t = [116,116] ,dt = 0 .
+current action length: 31
+
+Sequencial plan No.31
+(AC* MOVE-ARM (ARM TRAY-C TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [116,118] ,dt = 2 .
+current action length: 32
+
+Sequencial plan No.32
+(AC* ASSEMBLE-WITH-ARM (PART-C ATTATCH-C ATTATCH-B B3 ARM TABLE2)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [118,146] ,dt = 28 .
+current action length: 33
+
+Sequencial plan No.33
+(AC* EJECT-BASE (B3 ARM TABLE2)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [146,147] ,dt = 1 .
+current action length: 34
+
+Sequencial plan No.34
+(AC* MOVE-ARM (ARM TABLE2 TRAY-C)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [147,149] ,dt = 2 .
+current action length: 35
+
+Sequencial plan No.35
+(AC* MOVE-ARM (ARM TRAY-C MACHINE-B)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [149,150] ,dt = 1 .
+current action length: 36
+
+Sequencial plan No.36
+(AC* SET-BASE (B3 ARM MACHINE-B)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [150,151] ,dt = 1 .
+current action length: 37
+
+Sequencial plan No.37
+(AC* EJECT-BASE (B1 ARM MACHINE-A)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [151,152] ,dt = 1 .
+current action length: 38
+
+Sequencial plan No.38
+(AC* MOVE-ARM (ARM MACHINE-A TRAY-B)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [152,153] ,dt = 1 .
+current action length: 39
+
+Sequencial plan No.39
+(AC* MOVE-ARM (ARM TRAY-B TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [153,156] ,dt = 3 .
+current action length: 40
+
+Sequencial plan No.40
+(AC* SET-BASE (B1 ARM TABLE2)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [156,157] ,dt = 1 .
+current action length: 41
+
+Sequencial plan No.41
+(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted a state with no conflict.
+inserted new action with t = [157,157] ,dt = 0 .
+current action length: 42
+
+Sequencial plan No.42
+(AC* MOVE-ARM (ARM TRAY-B TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [157,160] ,dt = 3 .
+current action length: 43
+
+Sequencial plan No.43
+(AC* ASSEMBLE-WITH-ARM (PART-B ATTATCH-B SCREW-A B1 ARM TABLE2)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [160,173] ,dt = 13 .
+current action length: 44
+
+Sequencial plan No.44
+(AC* ASSEMBLE-WITH-MACHINE (B3 MACHINE-B SCREW-C ATTATCH-C)) 
+(ACT ASSEMBLE-WITH-MACHINE
+     (?BASE ?MACHINE ?JOB ?PREV-JOB)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?MACHINE)
+          (NOT (PRE FINISHED ?JOB ?BASE)) (PRE AT ?BASE ?MACHINE)
+          (PRE DEPENDS ?PREV-JOB ?JOB) (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted new action with t = [151,189] ,dt = 38 .
+current action length: 45
+
+Sequencial plan No.45
+(AC* EJECT-BASE (B3 ARM MACHINE-B)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [189,190] ,dt = 1 .
+current action length: 46
+
+Sequencial plan No.46
+(AC* MOVE-ARM (ARM MACHINE-B TABLE-OUT)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [190,191] ,dt = 1 .
+current action length: 47
+
+Sequencial plan No.47
+(AC* SET-BASE (B3 ARM TABLE-OUT)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [191,192] ,dt = 1 .
+current action length: 48
+
+Sequencial plan No.48
+(AC* SLIDE-BASE-OUT (B3 TABLE-OUT CARRY-OUT)) 
+(ACT SLIDE-BASE-OUT
+     (?BASE ?FROM ?TO)
+     (AND (PRE AT ?BASE ?FROM) (PRE CONNECTED ?FROM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [192,192] ,dt = 0 .
+current action length: 49
+
+Sequencial plan No.49
+(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted new action with t = [192,192] ,dt = 0 .
+current action length: 50
+
+Sequencial plan No.50
+(AC* MOVE-ARM (ARM TRAY-C TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [192,194] ,dt = 2 .
+current action length: 51
+
+Sequencial plan No.51
+(AC* ASSEMBLE-WITH-ARM (PART-C ATTATCH-C ATTATCH-B B1 ARM TABLE2)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [194,222] ,dt = 28 .
+current action length: 52
+
+Sequencial plan No.52
+(AC* EJECT-BASE (B1 ARM TABLE2)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [222,223] ,dt = 1 .
+current action length: 53
+
+Sequencial plan No.53
+(AC* MOVE-ARM (ARM TABLE2 TRAY-C)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [223,225] ,dt = 2 .
+current action length: 54
+
+Sequencial plan No.54
+(AC* MOVE-ARM (ARM TRAY-C MACHINE-B)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [225,226] ,dt = 1 .
+current action length: 55
+
+Sequencial plan No.55
+(AC* SET-BASE (B1 ARM MACHINE-B)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [226,227] ,dt = 1 .
+current action length: 56
+
+Sequencial plan No.56
+(AC* ASSEMBLE-WITH-MACHINE (B1 MACHINE-B SCREW-C ATTATCH-C)) 
+(ACT ASSEMBLE-WITH-MACHINE
+     (?BASE ?MACHINE ?JOB ?PREV-JOB)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?MACHINE)
+          (NOT (PRE FINISHED ?JOB ?BASE)) (PRE AT ?BASE ?MACHINE)
+          (PRE DEPENDS ?PREV-JOB ?JOB) (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [227,265] ,dt = 38 .
+current action length: 57
+
+Sequencial plan No.57
+(AC* EJECT-BASE (B1 ARM MACHINE-B)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [265,266] ,dt = 1 .
+current action length: 58
+
+Sequencial plan No.58
+(AC* MOVE-ARM (ARM MACHINE-B TABLE-OUT)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [266,267] ,dt = 1 .
+current action length: 59
+
+Sequencial plan No.59
+(AC* SET-BASE (B1 ARM TABLE-OUT)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [267,268] ,dt = 1 .
+current action length: 60
+
+Sequencial plan No.60
+(AC* SLIDE-BASE-OUT (B1 TABLE-OUT CARRY-OUT)) 
+(ACT SLIDE-BASE-OUT
+     (?BASE ?FROM ?TO)
+     (AND (PRE AT ?BASE ?FROM) (PRE CONNECTED ?FROM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [268,268] ,dt = 0 .
+current action length: 61
+
+Sequencial plan No.61
+(AC* EJECT-BASE (B2 ARM TABLE-IN)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted new action with t = [268,269] ,dt = 1 .
+current action length: 62
+
+Sequencial plan No.62
+(AC* MOVE-ARM (ARM TABLE-IN TRAY-A)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [269,271] ,dt = 2 .
+current action length: 63
+
+Sequencial plan No.63
+(AC* MOVE-ARM (ARM TRAY-A MACHINE-A)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [271,275] ,dt = 4 .
+current action length: 64
+
+Sequencial plan No.64
+(AC* SET-BASE (B2 ARM MACHINE-A)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [275,276] ,dt = 1 .
+current action length: 65
+
+Sequencial plan No.65
+(AC* ASSEMBLE-WITH-MACHINE (B2 MACHINE-A SCREW-A ATTATCH-A)) 
+(ACT ASSEMBLE-WITH-MACHINE
+     (?BASE ?MACHINE ?JOB ?PREV-JOB)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?MACHINE)
+          (NOT (PRE FINISHED ?JOB ?BASE)) (PRE AT ?BASE ?MACHINE)
+          (PRE DEPENDS ?PREV-JOB ?JOB) (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [276,294] ,dt = 18 .
+current action length: 66
+
+Sequencial plan No.66
+(AC* EJECT-BASE (B2 ARM MACHINE-A)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [294,295] ,dt = 1 .
+current action length: 67
+
+Sequencial plan No.67
+(AC* MOVE-ARM (ARM MACHINE-A TRAY-B)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [295,296] ,dt = 1 .
+current action length: 68
+
+Sequencial plan No.68
+(AC* MOVE-ARM (ARM TRAY-B TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [296,299] ,dt = 3 .
+current action length: 69
+
+Sequencial plan No.69
+(AC* SET-BASE (B2 ARM TABLE2)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [299,300] ,dt = 1 .
+current action length: 70
+
+Sequencial plan No.70
+(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted a state with no conflict.
+inserted new action with t = [300,300] ,dt = 0 .
+current action length: 71
+
+Sequencial plan No.71
+(AC* MOVE-ARM (ARM TRAY-B TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [300,303] ,dt = 3 .
+current action length: 72
+
+Sequencial plan No.72
+(AC* ASSEMBLE-WITH-ARM (PART-B ATTATCH-B SCREW-A B2 ARM TABLE2)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [303,316] ,dt = 13 .
+current action length: 73
+
+Sequencial plan No.73
+(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C)) 
+(ACT PICKUP-COMPONENT
+     (?COMPONENT ?ARM ?POS)
+     (AND (PRE FREE ?ARM) (PRE AT ?COMPONENT ?POS))) 
+inserted a state with no conflict.
+inserted new action with t = [316,316] ,dt = 0 .
+current action length: 74
+
+Sequencial plan No.74
+(AC* MOVE-ARM (ARM TRAY-C TABLE2)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [316,318] ,dt = 2 .
+current action length: 75
+
+Sequencial plan No.75
+(AC* ASSEMBLE-WITH-ARM (PART-C ATTATCH-C ATTATCH-B B2 ARM TABLE2)) 
+(ACT ASSEMBLE-WITH-ARM
+     (?COMPONENT ?JOB ?PREV-JOB ?BASE ?ARM ?POS)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?POS) (PRE USES ?JOB ?COMPONENT)
+          (PRE HOLD ?ARM ?COMPONENT) (PRE AT ?ARM ?POS)
+          (PRE AT ?BASE ?POS) (PRE DEPENDS ?PREV-JOB ?JOB)
+          (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [318,346] ,dt = 28 .
+current action length: 76
+
+Sequencial plan No.76
+(AC* EJECT-BASE (B2 ARM TABLE2)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [346,347] ,dt = 1 .
+current action length: 77
+
+Sequencial plan No.77
+(AC* MOVE-ARM (ARM TABLE2 TRAY-C)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [347,349] ,dt = 2 .
+current action length: 78
+
+Sequencial plan No.78
+(AC* MOVE-ARM (ARM TRAY-C MACHINE-B)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [349,350] ,dt = 1 .
+current action length: 79
+
+Sequencial plan No.79
+(AC* SET-BASE (B2 ARM MACHINE-B)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [350,351] ,dt = 1 .
+current action length: 80
+
+Sequencial plan No.80
+(AC* ASSEMBLE-WITH-MACHINE (B2 MACHINE-B SCREW-C ATTATCH-C)) 
+(ACT ASSEMBLE-WITH-MACHINE
+     (?BASE ?MACHINE ?JOB ?PREV-JOB)
+     (AND (PRE JOB-AVAILABLE-AT ?JOB ?MACHINE)
+          (NOT (PRE FINISHED ?JOB ?BASE)) (PRE AT ?BASE ?MACHINE)
+          (PRE DEPENDS ?PREV-JOB ?JOB) (PRE FINISHED ?PREV-JOB ?BASE))) 
+inserted a state with no conflict.
+inserted new action with t = [351,389] ,dt = 38 .
+current action length: 81
+
+Sequencial plan No.81
+(AC* EJECT-BASE (B2 ARM MACHINE-B)) 
+(ACT EJECT-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE AT ?BASE ?POS) (PRE FREE ?ARM))) 
+inserted a state with no conflict.
+inserted new action with t = [389,390] ,dt = 1 .
+current action length: 82
+
+Sequencial plan No.82
+(AC* MOVE-ARM (ARM MACHINE-B TABLE-OUT)) 
+(ACT MOVE-ARM
+     (?ARM ?FROM ?TO)
+     (AND (PRE AT ?ARM ?FROM) (NOT (PRE ARM-PRESENT ?TO))
+          (PRE ADJACENT ?FROM ?TO) (PRE REACHABLE ?ARM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [390,391] ,dt = 1 .
+current action length: 83
+
+Sequencial plan No.83
+(AC* SET-BASE (B2 ARM TABLE-OUT)) 
+(ACT SET-BASE
+     (?BASE ?ARM ?POS)
+     (AND (PRE HOLD ?ARM ?BASE) (PRE AT ?ARM ?POS)
+          (NOT (PRE BASE-PRESENT ?POS)))) 
+inserted a state with no conflict.
+inserted new action with t = [391,392] ,dt = 1 .
+current action length: 84
+
+Sequencial plan No.84
+(AC* SLIDE-BASE-OUT (B2 TABLE-OUT CARRY-OUT)) 
+(ACT SLIDE-BASE-OUT
+     (?BASE ?FROM ?TO)
+     (AND (PRE AT ?BASE ?FROM) (PRE CONNECTED ?FROM ?TO))) 
+inserted a state with no conflict.
+inserted new action with t = [392,392] ,dt = 0 .
+current action length: 85
+0|(AC* SLIDE-BASE-IN (B3 CARRY-IN TABLE-IN))
+0|(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A))
+0|-|(AC* MOVE-ARM (ARM TRAY-A TABLE-IN))
+0  |-----------------|(AC* ASSEMBLE-WITH-ARM (PART-A ATTATCH-A NOTHING-DONE B3 ARM TABLE-IN))
+0                    ||(AC* EJECT-BASE (B3 ARM TABLE-IN))
+0                     |(AC* SLIDE-BASE-IN (B1 CARRY-IN TABLE-IN))
+0                     |-|(AC* MOVE-ARM (ARM TABLE-IN TRAY-A))
+0                       |---|(AC* MOVE-ARM (ARM TRAY-A MACHINE-A))
+0                           ||(AC* SET-BASE (B3 ARM MACHINE-A))
+0                            |-----------------|(AC* ASSEMBLE-WITH-MACHINE (B3 MACHINE-A SCREW-A ATTATCH-A))
+0                                              ||(AC* EJECT-BASE (B3 ARM MACHINE-A))
+0                                               ||(AC* MOVE-ARM (ARM MACHINE-A TRAY-B))
+0                                                |--|(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+0                                                   ||(AC* SET-BASE (B3 ARM TABLE2))
+0                                                    |(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B))
+0                                                    |--|(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+0                                                       |------------|(AC* ASSEMBLE-WITH-ARM (PART-B ATTATCH-B SCREW-A B3 ARM TABLE2))
+0                                                                    |(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A))
+0                                                                    |-|(AC* MOVE-ARM (ARM TRAY-A TABLE-IN))
+0                                                                      |-----------------|(AC* ASSEMBLE-WITH-ARM (PART-A ATTATCH-A NOTHING-DONE B1 ARM TABLE-IN))
+0                                                                                        ||(AC* EJECT-BASE (B1 ARM TABLE-IN))
+0                                                                                         |(AC* SLIDE-BASE-IN (B2 CARRY-IN TABLE-IN))
+0                                                                                         |-|(AC* MOVE-ARM (ARM TABLE-IN TRAY-A))
+0                                                                                           |---|(AC* MOVE-ARM (ARM TRAY-A MACHINE-A))
+0                                                                                               ||(AC* SET-BASE (B1 ARM MACHINE-A))
+0                                                                                                |-----------------|(AC* ASSEMBLE-WITH-MACHINE (B1 MACHINE-A SCREW-A ATTATCH-A))
+0                                                                                                |(AC* PICKUP-COMPONENT (PART-A ARM TRAY-A))
+0                                                                                                |-|(AC* MOVE-ARM (ARM TRAY-A TABLE-IN))
+0                                                                                                  |-----------------|(AC* ASSEMBLE-WITH-ARM (PART-A ATTATCH-A NOTHING-DONE B2 ARM TABLE-IN))
+0                                                                                                                    |(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C))
+0                                                                                                                    |-|(AC* MOVE-ARM (ARM TRAY-C TABLE2))
+0                                                                                                                      |---------------------------|(AC* ASSEMBLE-WITH-ARM (PART-C ATTATCH-C ATTATCH-B B3 ARM TABLE2))
+0                                                                                                                                                  ||(AC* EJECT-BASE (B3 ARM TABLE2))
+0                                                                                                                                                   |-|(AC* MOVE-ARM (ARM TABLE2 TRAY-C))
+0                                                                                                                                                     ||(AC* MOVE-ARM (ARM TRAY-C MACHINE-B))
+0                                                                                                                                                      ||(AC* SET-BASE (B3 ARM MACHINE-B))
+0                                                                                                                                                       ||(AC* EJECT-BASE (B1 ARM MACHINE-A))
+0                                                                                                                                                        ||(AC* MOVE-ARM (ARM MACHINE-A TRAY-B))
+0                                                                                                                                                         |--|(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+0                                                                                                                                                            ||(AC* SET-BASE (B1 ARM TABLE2))
+0                                                                                                                                                             |(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B))
+0                                                                                                                                                             |--|(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+0                                                                                                                                                                |------------|(AC* ASSEMBLE-WITH-ARM (PART-B ATTATCH-B SCREW-A B1 ARM TABLE2))
+0                                                                                                                                                       |-------------------------------------|(AC* ASSEMBLE-WITH-MACHINE (B3 MACHINE-B SCREW-C ATTATCH-C))
+0                                                                                                                                                                                             ||(AC* EJECT-BASE (B3 ARM MACHINE-B))
+0                                                                                                                                                                                              ||(AC* MOVE-ARM (ARM MACHINE-B TABLE-OUT))
+0                                                                                                                                                                                               ||(AC* SET-BASE (B3 ARM TABLE-OUT))
+0                                                                                                                                                                                                |(AC* SLIDE-BASE-OUT (B3 TABLE-OUT CARRY-OUT))
+0                                                                                                                                                                                                |(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C))
+0                                                                                                                                                                                                |-|(AC* MOVE-ARM (ARM TRAY-C TABLE2))
+0                                                                                                                                                                                                  |---------------------------|(AC* ASSEMBLE-WITH-ARM (PART-C ATTATCH-C ATTATCH-B B1 ARM TABLE2))
+0                                                                                                                                                                                                                              ||(AC* EJECT-BASE (B1 ARM TABLE2))
+0                                                                                                                                                                                                                               |-|(AC* MOVE-ARM (ARM TABLE2 TRAY-C))
+0                                                                                                                                                                                                                                 ||(AC* MOVE-ARM (ARM TRAY-C MACHINE-B))
+0                                                                                                                                                                                                                                  ||(AC* SET-BASE (B1 ARM MACHINE-B))
+0                                                                                                                                                                                                                                   |-------------------------------------|(AC* ASSEMBLE-WITH-MACHINE (B1 MACHINE-B SCREW-C ATTATCH-C))
+250               ||(AC* EJECT-BASE (B1 ARM MACHINE-B))
+250                ||(AC* MOVE-ARM (ARM MACHINE-B TABLE-OUT))
+250                 ||(AC* SET-BASE (B1 ARM TABLE-OUT))
+250                  |(AC* SLIDE-BASE-OUT (B1 TABLE-OUT CARRY-OUT))
+250                  ||(AC* EJECT-BASE (B2 ARM TABLE-IN))
+250                   |-|(AC* MOVE-ARM (ARM TABLE-IN TRAY-A))
+250                     |---|(AC* MOVE-ARM (ARM TRAY-A MACHINE-A))
+250                         ||(AC* SET-BASE (B2 ARM MACHINE-A))
+250                          |-----------------|(AC* ASSEMBLE-WITH-MACHINE (B2 MACHINE-A SCREW-A ATTATCH-A))
+250                                            ||(AC* EJECT-BASE (B2 ARM MACHINE-A))
+250                                             ||(AC* MOVE-ARM (ARM MACHINE-A TRAY-B))
+250                                              |--|(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+250                                                 ||(AC* SET-BASE (B2 ARM TABLE2))
+250                                                  |(AC* PICKUP-COMPONENT (PART-B ARM TRAY-B))
+250                                                  |--|(AC* MOVE-ARM (ARM TRAY-B TABLE2))
+250                                                     |------------|(AC* ASSEMBLE-WITH-ARM (PART-B ATTATCH-B SCREW-A B2 ARM TABLE2))
+250                                                                  |(AC* PICKUP-COMPONENT (PART-C ARM TRAY-C))
+250                                                                  |-|(AC* MOVE-ARM (ARM TRAY-C TABLE2))
+250                                                                    |---------------------------|(AC* ASSEMBLE-WITH-ARM (PART-C ATTATCH-C ATTATCH-B B2 ARM TABLE2))
+250                                                                                                ||(AC* EJECT-BASE (B2 ARM TABLE2))
+250                                                                                                 |-|(AC* MOVE-ARM (ARM TABLE2 TRAY-C))
+250                                                                                                   ||(AC* MOVE-ARM (ARM TRAY-C MACHINE-B))
+250                                                                                                    ||(AC* SET-BASE (B2 ARM MACHINE-B))
+250                                                                                                     |-------------------------------------|(AC* ASSEMBLE-WITH-MACHINE (B2 MACHINE-B SCREW-C ATTATCH-C))
+250                                                                                                                                           ||(AC* EJECT-BASE (B2 ARM MACHINE-B))
+250                                                                                                                                            ||(AC* MOVE-ARM (ARM MACHINE-B TABLE-OUT))
+250                                                                                                                                             ||(AC* SET-BASE (B2 ARM TABLE-OUT))
+250                                                                                                                                              |(AC* SLIDE-BASE-OUT (B2 TABLE-OUT CARRY-OUT))
+0|(INIT-ACTION)

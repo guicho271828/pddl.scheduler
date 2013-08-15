@@ -1,6 +1,6 @@
 (in-package :pddl.scheduler)
 (use-syntax :annot)
-
+(package-optimize-setting)
 ;; implement minimum slack scheduler, a kind of scheduler based on the
 ;; greedy algorithm.
 
@@ -142,21 +142,20 @@
      (if (appliable state aa)
 	 (if rest2
 	     (%insert-state-inner
-	      aa duration (+ time duration) rest2 (cons ts acc))
-	     (%insert-state-finish
-	      aa duration ts (cons ts acc)))
+	      aa duration ts (+ time duration) rest2 (cons ts acc))
+	     (%insert-state-finish aa duration ts (cons ts acc)))
 	 (%insert-state-rec aa duration rest2 (cons ts acc))))
     (nil (%debug-insert-failure aa rest acc))))
 
-(defun %insert-state-inner (aa duration end-time rest acc)
+(defun %insert-state-inner (aa duration earliest end rest acc)
   (ematch rest
     ((list* (and ts2 (timed-state state time)) rest2)
-     (if (<= time end-time)
+     (if (<= time end)
 	 ;; checks during the time span
 	 (if (appliable state aa)
 	     (if rest2
-		 (%insert-state-inner aa duration end-time rest2 (cons ts2 acc))
-		 (%insert-state-finish aa duration ts2 (cons ts2 acc)))
+		 (%insert-state-inner aa duration earliest end rest2 (cons ts2 acc))
+		 (%insert-state-mergedto aa earliest duration (cons ts2 acc)))
 	     (%insert-state-rec aa duration rest2 (cons ts2 acc)))
 	 (if-let ((merged (%check-after-end-time aa duration rest acc)))
 	   ;; if the action is applicable to the all states
@@ -165,9 +164,11 @@
 	   (%insert-state-merge aa duration merged acc)
 	   (%insert-state-rec aa duration rest acc))))))
 
+;;                         |the only applicable state
+;; -x---------------x------*---(a)
+;; -x---------------x------*----a
 (defun %insert-state-finish (aa duration ts acc)
-  ;; called when there is no timed-state after ts.
-  ;; apply AA to the last state in the timeline.
+  (format t "~%inserted a state with no conflict.")
   (let ((new
 	 (timed-state
 	  aa
@@ -177,6 +178,67 @@
      (nreverse
       (cons new acc))
      (timed-action aa ts duration new))))
+
+;; in %insert-state-inner,
+;;
+;;    acc<<|               |time
+;; --x-----*---------------?------?
+;;         *----(a)        |>>rest
+;;               |end
+;;
+;; if all ? can be achieved
+;; by applying the same action sequence after * to (a)
+;; then it is feasible to insert (a) between * and ?
+;;
+;; before<<|               |time
+;; --x-----*        /------x------x
+;;         *-----a-/       |>>merged
+(defun %insert-state-merge (aa duration merged before)
+  (format t "~%inserted a state, rebasing the states t >= ~a to it."
+	  (timed-state-time (car before)))
+  (values
+   (reverse
+    (revappend merged before))
+   (timed-action aa (car before) duration (car merged))))
+
+(defun apply-action-timed-state (aa ts duration)
+  (timed-state
+   aa
+   (apply-actual-action aa (timed-state-state ts))
+   (+ duration (timed-state-time ts))))
+
+;; in %insert-state-inner,
+;;
+;;            |time
+;;    before<<|(car acc)
+;; --x--*--*--*
+;;      *-------(a)
+;;               |end
+;;
+;;    before<<|
+;; --x--*--*--*
+;;            +-(a)
+;;
+;; however in the case below,
+;; merging fails and abort the insertion.
+;; back to %insert-state-rec.
+;;
+;;         |time
+;; before<<|  
+;; --x--*--x--(rest)
+;;      *-------(a)
+;;               |end
+;; 
+(defun %insert-state-mergedto (aa earliest duration before)
+  (let* ((last (car before))
+	 (new (apply-action-timed-state
+	       aa last duration)))
+    (setf (timed-state-time new)
+	  (+ (timed-state-time earliest) duration))
+    (values
+     (reverse
+      (cons new before))
+     (timed-action aa earliest duration new))))
 
 (defun %check-after-end-time (aa duration rest acc)
   ;; check the states after the time span.
@@ -200,19 +262,6 @@
 		  (push ts merged)
 		  t)))) rest)
       (nreverse merged))))
-
-
-
-(defun %insert-state-merge (aa duration merged acc)
-  (values
-   (nreverse
-    (revappend merged acc))
-   (timed-action aa (car acc) duration (car merged))))
-
-;; (defmethod reschedule ((plan pddl-plan)
-;; 		       (algorhythm (eql :minimum-slack)))
-  
-;; parallel-plan : 
 
 (defun %debug-insert-failure (aa rest acc)
   (do-restart ((describe-checked
@@ -238,3 +287,4 @@
 	     aa 
 	     (mapcar fn rest)
 	     (mapcar fn acc)))))
+
