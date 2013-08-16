@@ -8,5 +8,6 @@
 
 (test build-schedule
   (finishes
-    (mapc (rcurry #'print-timed-action-graphically *standard-output*)
-	  (%build-schedule CELL-ASSEMBLY-ANYWHERE-P3-3))))
+    (print-timed-action-graphically
+     (%build-schedule cell-assembly-model2a-3-3)
+     *standard-output*)))
