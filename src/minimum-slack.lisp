@@ -76,6 +76,38 @@
   aa1 aa2
   nil)
 
+(defun check-timed-action (new-timed-action)
+  (format t "~%inserted new action with t = [~a,~a] ,dt = ~a ."
+	  (timed-state-time 
+	   (timed-action-start new-timed-action))
+	  (timed-state-time 
+	   (timed-action-end new-timed-action))
+	  (timed-action-duration new-timed-action))
+  (assert (<= (timed-state-time 
+	       (timed-action-start new-timed-action))
+	      (timed-state-time 
+	       (timed-action-end new-timed-action)))
+	  nil "illegal start/end time: [~a,~a]~%in:~%~w"
+	  (timed-state-time 
+	   (timed-action-start new-timed-action))
+	  (timed-state-time 
+	   (timed-action-end new-timed-action))
+	  new-timed-action))
+
+(defun sort-timed-actions (aactions)
+  (stable-sort
+   (copy-seq aactions)
+   (lambda (ta1 ta2)
+     (cond 
+       ((< (timed-state-time (timed-action-start ta1))
+	   (timed-state-time (timed-action-start ta2))) t)
+       ((> (timed-state-time (timed-action-start ta1))
+	   (timed-state-time (timed-action-start ta2))) nil)
+       ((= (timed-state-time (timed-action-start ta1))
+	   (timed-state-time (timed-action-start ta2)))
+	(< (timed-state-time (timed-action-end ta1))
+	   (timed-state-time (timed-action-end ta2))))))))
+
 @export
 (defun %build-schedule (plan)
   @type pddl-plan plan
@@ -95,38 +127,25 @@
 	(format t "~%~%Sequencial plan No.~a" (1- (index env)))
 	(print aa)
 	(print (action (domain aa) aa))
-	(multiple-value-bind (new-timed-states new-timed-action)
-	    (%insert-state aa duration timed-states)
-	  (format t "~%inserted new action with t = [~a,~a] ,dt = ~a ."
-		  (timed-state-time 
-		   (timed-action-start new-timed-action))
-		  (timed-state-time 
-		   (timed-action-end new-timed-action))
-		  (timed-action-duration new-timed-action))
-
-	  (assert (<= (timed-state-time 
-		       (timed-action-start new-timed-action))
-		      (timed-state-time 
-		       (timed-action-end new-timed-action)))
-		  nil "illegal start/end time: [~a,~a]~%in:~%~w"
-		  (timed-state-time 
-		   (timed-action-start new-timed-action))
-		  (timed-state-time 
-		   (timed-action-end new-timed-action))
-		  new-timed-action)
-
-	  (setf timed-states (sort new-timed-states
-				   #'< :key #'timed-state-time))
-	  (iter (for aas on aactions)
-		(when (<= (timed-state-time
-			   (timed-action-end (first aas)))
-			  (timed-state-time
-			   (timed-action-start new-timed-action)))
-		  (push new-timed-action (cdr aas))
-		  (terminate))))
+	(restart-bind ((draw-shrinked-plan
+			(lambda ()
+			  (print-timed-action-graphically
+			   (reverse aactions) *debug-io*)))
+		       (draw-shrinked-plan-chronologically
+			(lambda ()
+			  (print-timed-action-graphically
+			   (sort-timed-actions aactions)
+			   *debug-io*))))
+	  (multiple-value-bind (new-timed-states new-timed-action)
+	      (%insert-state aa duration timed-states)
+	    (check-timed-action new-timed-action)
+	    (setf timed-states
+		  (stable-sort new-timed-states
+			       #'< :key #'timed-state-time))
+	    (push new-timed-action aactions)))
 	(format t "~%current action length: ~a" (length aactions))
-	(setf cost new-cost)))					
-    (nreverse aactions)))
+	(setf cost new-cost)))
+    (sort-timed-actions aactions)))
 
 ;; recursive version
 (defun %insert-state (aa duration timed-states)
@@ -186,7 +205,7 @@
 ;;         *----(a)        |>>rest
 ;;               |end
 ;;
-;; if all ? can be achieved
+;; if all ? can be reached
 ;; by applying the same action sequence after * to (a)
 ;; then it is feasible to insert (a) between * and ?
 ;;
