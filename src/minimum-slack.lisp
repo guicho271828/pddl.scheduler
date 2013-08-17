@@ -83,15 +83,17 @@
 	  (timed-state-time 
 	   (timed-action-end new-timed-action))
 	  (timed-action-duration new-timed-action))
-  (assert (<= (timed-state-time 
-	       (timed-action-start new-timed-action))
-	      (timed-state-time 
-	       (timed-action-end new-timed-action)))
-	  nil "illegal start/end time: [~a,~a]~%in:~%~w"
+  (assert (= (+ (timed-action-duration new-timed-action)
+		(timed-state-time 
+		 (timed-action-start new-timed-action)))
+	     (timed-state-time 
+	      (timed-action-end new-timed-action)))
+	  nil "illegal start/end time: [~a,~a], dt=~a~%in:~%~w"
 	  (timed-state-time 
 	   (timed-action-start new-timed-action))
 	  (timed-state-time 
 	   (timed-action-end new-timed-action))
+	  (timed-action-duration new-timed-action)
 	  new-timed-action))
 
 (defun sort-timed-actions (aactions)
@@ -145,7 +147,8 @@
 	    (push new-timed-action aactions)))
 	(format t "~%current action length: ~a" (length aactions))
 	(setf cost new-cost)))
-    (sort-timed-actions aactions)))
+    ;(sort-timed-actions aactions)
+    (reverse aactions)))
 
 ;; recursive version
 (defun %insert-state (aa duration timed-states)
@@ -169,19 +172,21 @@
 (defun %insert-state-inner (aa duration earliest end rest acc)
   (ematch rest
     ((list* (and ts2 (timed-state state time)) rest2)
-     (if (<= time end)
-	 ;; checks during the time span
-	 (if (appliable state aa)
-	     (if rest2
-		 (%insert-state-inner aa duration earliest end rest2 (cons ts2 acc))
-		 (%insert-state-mergedto aa earliest duration (cons ts2 acc)))
-	     (%insert-state-rec aa duration rest2 (cons ts2 acc)))
-	 (if-let ((merged (%check-after-end-time aa duration rest acc)))
-	   ;; if the action is applicable to the all states
-	   ;; after the finishing time of AA, then AA can be merged fast-forward.
-	   ;; Apply AA to the last state.
-	   (%insert-state-merge aa duration merged acc)
-	   (%insert-state-rec aa duration rest acc))))))
+     (cond
+       ((<= time end)
+	;; checks during the time span
+	(if (appliable state aa)
+	    (if rest2
+		(%insert-state-inner aa duration earliest end rest2 (cons ts2 acc))
+		(%insert-state-mergedto aa earliest duration (cons ts2 acc)))
+	    (%insert-state-rec aa duration rest2 (cons ts2 acc))))
+       ((< end time)
+	(if-let ((merged (%check-after-end-time aa end rest acc)))
+	  ;; if the action is applicable to the all states
+	  ;; after the finishing time of AA, then AA can be merged fast-forward.
+	  ;; Apply AA to the last state.
+	  (%insert-state-merge aa duration earliest merged acc)
+	  (%insert-state-rec aa duration rest acc)))))))
 
 ;;                         |the only applicable state
 ;; -x---------------x------*---(a)
@@ -201,24 +206,39 @@
 ;; in %insert-state-inner,
 ;;
 ;;    acc<<|               |time
-;; --x-----*---------------?------?
+;; --x-----*---------------?--?--?--?--?--...
 ;;         *----(a)        |>>rest
 ;;               |end
 ;;
 ;; if all ? can be reached
 ;; by applying the same action sequence after * to (a)
-;; then it is feasible to insert (a) between * and ?
+;; then it is feasible to insert (a) between * and ?.
+;; this is checked by %check-after-end-time.
 ;;
-;; before<<|               |time
-;; --x-----*        /------x------x
-;;         *-----a-/       |>>merged
-(defun %insert-state-merge (aa duration merged before)
+;; before<<|     |>>merged |time
+;; --x-----*     |  /------x------x
+;;         *-----a-/
+;;
+;; this is also possible after some calls to %insert-state-inner:
+;;
+;;       acc<<|            |time
+;; --x-----*--*------------?--?--?--?--?--...
+;;         *----(a)        |>>rest
+;;               |end
+;;
+;; the consequense is the same:
+;;
+;;    before<<|  |>>merged |time
+;; --x-----*--*  |  /------x------x
+;;            +--a-/
+;; 
+(defun %insert-state-merge (aa duration earliest merged before)
   (format t "~%inserted a state, rebasing the states t >= ~a to it."
 	  (timed-state-time (car before)))
   (values
    (reverse
     (revappend merged before))
-   (timed-action aa (car before) duration (car merged))))
+   (timed-action aa earliest duration (car merged))))
 
 (defun apply-action-timed-state (aa ts duration)
   (timed-state
@@ -259,26 +279,36 @@
       (cons new before))
      (timed-action aa earliest duration new))))
 
-(defun %check-after-end-time (aa duration rest acc)
+;;       acc<<|            |time
+;; --x-----*--*------------?--?--?--?--?--...
+;;         *----(a)        |>>rest
+;; earliest|     |end,new
+;;
+;; if all ? can be reached
+;; by applying the same action sequence after * to (a)
+;; then it is feasible to insert (a) between * and ?.
+;; this is checked by %check-after-end-time.
+;; 
+(defun %check-after-end-time (aa end rest acc)
   ;; check the states after the time span.
   ;; returns a list of timed-state in the chlonological order.
-  (let* ((prev (car acc))
-	 (merged-next (apply-actual-action
-		       aa (timed-state-state prev)))
-	 (new (timed-state
-	       aa merged-next
-	       (+ duration
-		  (timed-state-time prev))))
+  (assert (appliable (timed-state-state (car acc)) aa))
+  (assert (<= (timed-state-time (car acc))
+	      (timed-state-time (car rest))))
+  (let* ((merged-next (apply-actual-action
+		       aa (timed-state-state (car acc))))
+	 (new (timed-state aa merged-next end))
 	 (merged nil))
     (when (every
 	   (lambda (ts)
 	     (match ts
 	       ((timed-state action time)
-		(when 
-		    (appliable merged-next action)
+		(assert (<= end time))
+		(when (appliable merged-next action)
 		  (setf merged-next (apply-actual-action action merged-next))
 		  (push (timed-state action merged-next time) merged)
-		  t)))) rest)
+		  t))))
+	   rest)
       (iter (for merged-state in (nreverse merged))
 	    (for ts in rest)
 	    (assert (eq (timed-state-action merged-state)
