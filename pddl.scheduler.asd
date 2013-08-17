@@ -21,10 +21,12 @@
                :anaphora
                :fiveam
                :metatilities)
-  :components ((:module "src"
+  :components ((:file :package :pathname "src/package")
+	       (:module "src"
+		:depends-on (:package)
                 :components
-                ((:file :package)
-		 (:file :minimum-slack))))
+                ((:file :minimum-slack)
+		 (:file :graphical-utils))))
   :description ""
   :long-description
   #.(with-open-file (stream (merge-pathnames

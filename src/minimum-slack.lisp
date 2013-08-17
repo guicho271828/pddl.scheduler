@@ -4,7 +4,11 @@
 ;; implement minimum slack scheduler, a kind of scheduler based on the
 ;; greedy algorithm.
 
+@export
 (defgeneric reschedule (plan algorhythm))
+(defmethod reschedule ((plan pddl-plan) (algorhythm (eql :minimum-slack)))
+  (%build-schedule plan))
+
 
 @export 'timed-action
 @export 'timed-action-action
