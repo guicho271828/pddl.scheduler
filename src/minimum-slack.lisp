@@ -262,25 +262,30 @@
 (defun %check-after-end-time (aa duration rest acc)
   ;; check the states after the time span.
   ;; returns a list of timed-state in the chlonological order.
-  (let* ((merged nil)
-	 (prev (car acc))
+  (let* ((prev (car acc))
 	 (merged-next (apply-actual-action
 		       aa (timed-state-state prev)))
 	 (new (timed-state
-	       aa
-	       merged-next
-	       (+ (timed-state-time prev) duration))))
-    (push new merged)
+	       aa merged-next
+	       (+ duration
+		  (timed-state-time prev))))
+	 (merged nil))
     (when (every
 	   (lambda (ts)
 	     (match ts
-	       ((timed-state action (state (place state)))
-		(when (appliable merged-next action)
-		  (setf state (apply-actual-action action merged-next)
-			merged-next state)
-		  (push ts merged)
+	       ((timed-state action time)
+		(when 
+		    (appliable merged-next action)
+		  (setf merged-next (apply-actual-action action merged-next))
+		  (push (timed-state action merged-next time) merged)
 		  t)))) rest)
-      (nreverse merged))))
+      (iter (for merged-state in (nreverse merged))
+	    (for ts in rest)
+	    (assert (eq (timed-state-action merged-state)
+			(timed-state-action ts)))
+	    (setf (timed-state-state ts)
+		  (timed-state-state merged-state)))
+      (cons new rest))))
 
 (defun %debug-insert-failure (aa rest acc)
   (do-restart ((describe-checked
