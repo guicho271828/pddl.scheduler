@@ -11,3 +11,9 @@
     (print-timed-action-graphically
      (%build-schedule cell-assembly-model2a-3-3)
      *standard-output*)))
+
+(test filtering
+  (finishes
+    (filter-schedule
+     (%build-schedule cell-assembly-model2a-3-3)
+     :objects 'b-0)))
