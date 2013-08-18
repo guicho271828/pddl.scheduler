@@ -27,6 +27,9 @@
   duration
   end)
 
+@export 'timed-state
+@export 'timed-state-time
+@export 'timed-state-state
 (defstruct (timed-state
 	     (:constructor timed-state (action state time)))
   action state time)
