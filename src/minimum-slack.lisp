@@ -124,7 +124,9 @@
 @export
 (defun %build-schedule (plan)
   @type pddl-plan plan
-  (let* ((cost 0)
+  (let* ((*domain* (domain plan))
+	 (*problem* (problem plan))
+	 (cost 0)
 	 (aa (first-elt (actions plan)))
 	 (ts (timed-state
 	      aa
