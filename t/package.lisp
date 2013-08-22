@@ -5,7 +5,7 @@
 (in-package :cl-user)
 (defpackage pddl.scheduler-test
   (:use :cl
-	:pddl-test
+	:pddl.instances
 	:alexandria
 	:pddl
 	:iterate

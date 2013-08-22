@@ -12,7 +12,7 @@
   :author ""
   :license ""
   :depends-on (:pddl
-	       :plan-optimizer
+	       :pddl.plan-optimizer
                :guicho-utilities
                :iterate
                :alexandria
@@ -41,3 +41,8 @@
           (setf (fill-pointer seq) (read-sequence seq stream))
           seq)))
   :in-order-to ((test-op (load-op pddl.scheduler-test))))
+
+(defmethod asdf:perform ((op asdf:test-op)
+			 (system (eql (asdf:find-system :pddl.scheduler))))
+  (funcall (find-symbol "RUN!" (find-package :fiveam)) :pddl)
+  t)

@@ -10,7 +10,9 @@
 (defsystem pddl.scheduler-test
   :author ""
   :license ""
-  :depends-on (:pddl.scheduler
+  :depends-on (:pddl
+	       :pddl.scheduler
+	       :pddl.instances
 	       :pddl-test)
   :components ((:module "t"
                 :components
