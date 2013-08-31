@@ -174,7 +174,7 @@
 (defun %insert-state-rec (aa duration rest acc)
   (match rest
     ((list* (and ts (timed-state state time)) rest2)
-     (if (appliable state aa)
+     (if (applicable state aa)
 	 (if rest2
 	     (%insert-state-inner
 	      aa duration ts (+ time duration) rest2 (cons ts acc))
@@ -188,7 +188,7 @@
      (cond
        ((<= time end)
 	;; checks during the time span
-	(if (appliable state aa)
+	(if (applicable state aa)
 	    (if rest2
 		(%insert-state-inner aa duration earliest end rest2 (cons ts2 acc))
 		(%insert-state-mergedto aa earliest duration (cons ts2 acc)))
@@ -305,7 +305,7 @@
 (defun %check-after-end-time (aa end rest acc)
   ;; check the states after the time span.
   ;; returns a list of timed-state in the chlonological order.
-  (assert (appliable (timed-state-state (car acc)) aa))
+  (assert (applicable (timed-state-state (car acc)) aa))
   (assert (<= (timed-state-time (car acc))
 	      (timed-state-time (car rest))))
   (let* ((merged-next (apply-actual-action
@@ -317,7 +317,7 @@
 	     (match ts
 	       ((timed-state action time)
 		(assert (<= end time))
-		(when (appliable merged-next action)
+		(when (applicable merged-next action)
 		  (setf merged-next (apply-actual-action action merged-next))
 		  (push (timed-state action merged-next time) merged)
 		  t))))
@@ -334,13 +334,13 @@
   (do-restart ((describe-checked
 		(named-lambda describer (n)
 		  (let ((state (timed-state-state (nth n (append rest acc)))))
-		    (format t "~%~w is ~:[not~;~] appliable to~%~w~
+		    (format t "~%~w is ~:[not~;~] applicable to~%~w~
                                   ~%because of:~%"
-			    aa (appliable state aa) (remove-fst state))
+			    aa (applicable state aa) (remove-fst state))
 		    (handler-bind 
 			((assignment-error (rcurry #'describe *debug-io*))
 			 (state-not-found (rcurry #'describe *debug-io*)))
-		      (appliable state aa))))
+		      (applicable state aa))))
 		:interactive-function
 		(named-lambda reader ()
 		  (format *query-io* "~%enter a number:")
