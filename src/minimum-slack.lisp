@@ -4,10 +4,14 @@
 ;; implement minimum slack scheduler, a kind of scheduler based on the
 ;; greedy algorithm.
 
+(defvar *rescheduler-verbosity* nil)
+
 @export
-(defgeneric reschedule (plan algorhythm))
-(defmethod reschedule ((plan pddl-plan) (algorhythm (eql :minimum-slack)))
-  (%build-schedule plan))
+(defgeneric reschedule (plan algorhythm &key verbose))
+(defmethod reschedule ((plan pddl-plan)
+                       (algorhythm (eql :minimum-slack)) &key verbose)
+  (let ((*rescheduler-verbosity* verbose))
+    (%build-schedule plan)))
 
 
 @export 'timed-action
@@ -88,12 +92,13 @@
   nil)
 
 (defun check-timed-action (new-timed-action)
-  (format t "~%inserted new action with t = [~a,~a] ,dt = ~a ."
-	  (timed-state-time 
-	   (timed-action-start new-timed-action))
-	  (timed-state-time 
-	   (timed-action-end new-timed-action))
-	  (timed-action-duration new-timed-action))
+  (when *rescheduler-verbosity*
+    (format t "~%inserted new action with t = [~a,~a] ,dt = ~a ."
+            (timed-state-time 
+             (timed-action-start new-timed-action))
+            (timed-state-time 
+             (timed-action-end new-timed-action))
+            (timed-action-duration new-timed-action)))
   (assert (= (+ (timed-action-duration new-timed-action)
 		(timed-state-time 
 		 (timed-action-start new-timed-action)))
@@ -139,9 +144,6 @@
       (let* ((new-cost (cost env))
 	     (duration (- new-cost cost))
 	     (aa (elt (actions plan) (1- (index env)))))
-	(format t "~%~%Sequencial plan No.~a" (1- (index env)))
-	(print aa)
-	(print (action (domain aa) aa))
 	(restart-bind ((draw-shrinked-plan
 			(lambda ()
 			  (print-timed-action-graphically
@@ -158,7 +160,11 @@
 		  (stable-sort new-timed-states
 			       #'< :key #'timed-state-time))
 	    (push new-timed-action aactions)))
-	(format t "~%current action length: ~a" (length aactions))
+        (when *rescheduler-verbosity*
+          (format t "~%~%Sequencial plan No.~a" (1- (index env)))
+          (print aa)
+          (print (action (domain aa) aa))
+          (format t "~%current action length: ~a" (length aactions)))
 	(setf cost new-cost)))
     ;(sort-timed-actions aactions)
     (reverse aactions)))
@@ -205,7 +211,8 @@
 ;; -x---------------x------*---(a)
 ;; -x---------------x------*----a
 (defun %insert-state-finish (aa duration ts acc)
-  (format t "~%inserted a state with no conflict.")
+  (when *rescheduler-verbosity*
+    (format t "~%inserted a state with no conflict."))
   (let ((new
 	 (timed-state
 	  aa
@@ -246,8 +253,9 @@
 ;;            +--a-/
 ;; 
 (defun %insert-state-merge (aa duration earliest merged before)
-  (format t "~%inserted a state, rebasing the states t >= ~a to it."
-	  (timed-state-time (car before)))
+  (when *rescheduler-verbosity*
+    (format t "~%inserted a state, rebasing the states t >= ~a to it."
+            (timed-state-time (car before))))
   (values
    (reverse
     (revappend merged before))
