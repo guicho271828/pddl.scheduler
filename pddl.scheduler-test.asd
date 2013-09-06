@@ -16,5 +16,6 @@
 	       :pddl-test)
   :components ((:module "t"
                 :components
-                ((:file :package))))
+                ((:file :package)
+                 (:file :minimum-slack))))
   :perform (load-op :after (op c) (asdf:clear-system c)))

@@ -12,6 +12,7 @@
 	:repl-utilities
 	:plan-optimizer
         :pddl.scheduler
+        :pddl.instances
 	:optima
 	:fiveam)
   (:shadow :fail :maximize :minimize))
