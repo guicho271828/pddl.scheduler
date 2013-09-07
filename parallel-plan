@@ -1,3 +1,4 @@
+-*- truncate-lines : t -*-
 SCHEDULER-TEST> (print-timed-action-graphically (%build-schedule cell-assembly-anywhere-p3-3))
 
 
