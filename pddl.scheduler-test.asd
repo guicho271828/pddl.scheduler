@@ -13,7 +13,8 @@
   :depends-on (:pddl
 	       :pddl.scheduler
 	       :pddl.instances
-	       :pddl-test)
+               :repl-utilities
+               :pddl-test)
   :components ((:module "t"
                 :components
                 ((:file :package)
