@@ -5,14 +5,14 @@
 (in-package :cl-user)
 (defpackage pddl.scheduler
   (:use :cl
-	:pddl
-	:plan-optimizer
-	:guicho-utilities
-	:iterate
-	:alexandria
-	:optima
-	:cl-syntax
-	:anaphora)
+        :pddl
+        :plan-optimizer
+        :guicho-utilities
+        :iterate
+        :alexandria
+        :optima
+        :cl-syntax
+        :anaphora)
   (:shadowing-import-from :iterate :maximize :minimize))
 (in-package :pddl.scheduler)
 
