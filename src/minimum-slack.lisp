@@ -353,12 +353,14 @@
                 (named-lambda reader ()
                   (format *query-io* "~%enter a number:")
                   (list (read *query-io*)))))
-    (let ((fn (lambda (ts) (list (timed-state-time ts)
-                                 (timed-state-action ts)))))
+    (let ((fn (let ((i -1))
+                (lambda (ts) (list (incf i)
+                                   (timed-state-time ts)
+                                   (timed-state-action ts))))))
       (error "failed to insert the action to the list!~
                ~%~a~
-               ~%not checked yet:~%~:{time: ~w action:~w~%~}~
-               ~%already checked:~%~:{time: ~w action:~w~%~}"
+               ~%not checked yet:~%~:{n: ~w time: ~w action:~w~%~}~
+               ~%already checked:~%~:{n: ~w time: ~w action:~w~%~}"
              aa 
              (mapcar fn rest)
              (mapcar fn acc)))))
