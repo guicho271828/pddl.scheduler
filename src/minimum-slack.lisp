@@ -126,24 +126,26 @@
         (< (timed-state-time (timed-action-end ta1))
            (timed-state-time (timed-action-end ta2))))))))
 
+(defvar *plan*)
+
 @export
-(defun %build-schedule (plan)
-  @type pddl-plan plan
-  (let* ((*domain* (domain plan))
-         (*problem* (problem plan))
+(defun %build-schedule (*plan*)
+  @type pddl-plan *plan*
+  (let* ((*domain* (domain *plan*))
+         (*problem* (problem *plan*))
          (cost 0)
-         (aa (first-elt (actions plan)))
+         (aa (first-elt (actions *plan*)))
          (ts (timed-state
               aa
-              (mapcar #'shallow-copy (init (problem plan)))
+              (mapcar #'shallow-copy (init (problem *plan*)))
               0))
          (timed-states (list ts))
           ;; oldest action appears first
          (aactions (list (timed-action aa ts 0 ts))))
-    (with-simulating-plan (env (pddl-environment :plan plan))
+    (with-simulating-plan (env (pddl-environment :plan *plan*))
       (let* ((new-cost (cost env))
              (duration (- new-cost cost))
-             (aa (elt (actions plan) (1- (index env)))))
+             (aa (elt (actions *plan*) (1- (index env)))))
         (restart-bind ((draw-shrinked-plan
                         (lambda ()
                           (print-timed-action-graphically
@@ -347,6 +349,7 @@
                             aa (applicable state aa) (remove-fst state))
                     (handler-bind 
                         ((assignment-error (rcurry #'describe *debug-io*))
+                         (negative-condition-matched (rcurry #'describe *debug-io*))
                          (state-not-found (rcurry #'describe *debug-io*)))
                       (applicable state aa))))
                 :interactive-function
@@ -357,10 +360,12 @@
                 (lambda (ts) (list (incf i)
                                    (timed-state-time ts)
                                    (timed-state-action ts))))))
-      (error "failed to insert the action to the list!~
+      (error "In plan ~w ~&in problem ~w,~%failed to insert the action to the list!~
                ~%~a~
                ~%not checked yet:~%~:{n: ~w time: ~w action:~w~%~}~
                ~%already checked:~%~:{n: ~w time: ~w action:~w~%~}"
+             (path *plan*)
+             (path *problem*)
              aa 
              (mapcar fn rest)
              (mapcar fn acc)))))
