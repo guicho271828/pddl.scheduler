@@ -214,20 +214,21 @@
   (ematch rest
     ((list* (and ts2 (timed-state state time)) rest2)
      (cond
-       ((<= time end)
+       ((< time end)
         ;; checks during the time span
         (if (applicable state aa)
             (if rest2
                 (%insert-state-inner aa duration earliest end rest2 (cons ts2 acc))
                 (%insert-state-mergedto aa earliest duration (cons ts2 acc)))
             (%insert-state-rec aa duration rest2 (cons ts2 acc))))
-       ((< end time)
+       ((<= end time)
         (if-let ((merged (%check-after-end-time aa end rest acc)))
           ;; if the action is applicable to the all states
           ;; after the finishing time of AA, then AA can be merged fast-forward.
           ;; Apply AA to the last state.
           (%insert-state-merge aa duration earliest merged acc)
-          (%insert-state-rec aa duration rest acc)))))))
+          (%insert-state-rec aa duration rest acc)))
+       (t (error "What? time: ~a end: ~a" time end))))))
 
 ;;                         |the only applicable state
 ;; -x---------------x------*---(a)
