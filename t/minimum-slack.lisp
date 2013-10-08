@@ -7,10 +7,13 @@
 ;;   71 72 78 79 84 85 100 101 101)
 
 (test build-schedule
-  (finishes
-    (print-timed-action-graphically
-     (reschedule cell-assembly-model2a-2-1 :minimum-slack)
-     *standard-output*)))
+  (let (schedule)
+    (finishes
+      (setf schedule (reschedule cell-assembly-model2a-2-1 :minimum-slack))
+      (print-timed-action-graphically
+       schedule
+       *standard-output*))
+    (is (= 172 (timed-state-time (timed-action-end (lastcar schedule)))))))
 
 (test filtering
   (finishes
@@ -24,3 +27,4 @@
 (test rover2435-1
   (finishes
     (reschedule roverprob2435-1 :minimum-slack)))
+
