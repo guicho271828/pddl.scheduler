@@ -148,6 +148,9 @@
 
 (defvar *plan*)
 
+(defun draw-handler (tas)
+  (print-timed-action-graphically tas *debug-io*))
+
 @export
 (defun %build-schedule (*plan*)
   @type pddl-plan *plan*
@@ -164,11 +167,9 @@
              (duration (- new-cost cost))
              (aa (elt (actions *plan*) (1- (index env)))))
         (restart-bind ((draw-shrinked-plan
-                        (curry #'print-timed-action-graphically
-                               (reverse tas) *debug-io*))
+                        (lambda () (draw-handler tas)))
                        (draw-shrinked-plan-chronologically
-                        (curry #'print-timed-action-graphically
-                               (sort-timed-actions tas) *debug-io*)))
+                        (lambda () (draw-handler (sort-timed-actions tas)))))
           (multiple-value-bind (new-timed-states new-timed-action)
               (%insert-state
                aa duration
@@ -180,9 +181,9 @@
             (setf timed-states
                   (stable-sort new-timed-states
                                #'< :key #'timed-state-time))
-            (push new-timed-action tas)))
-        (setf cost new-cost)))
-    (reverse tas)))
+            (push new-timed-action tas))
+          (setf cost new-cost))))
+    (nreverse tas)))
 
 ;; (when *rescheduler-verbosity*
 ;;   (format t "~%~%Sequencial plan No.~a" (1- (index env)))
@@ -363,13 +364,12 @@
   (do-restart ((describe-checked
                 (named-lambda describer (n)
                   (let ((state (timed-state-state (nth n (append rest acc)))))
-                    (format t "~%~w is ~:[not~;~] applicable to~%~w~
-                                  ~%because of:~%"
+                    (format t "~%~w is ~:[not~;~] applicable to~%~w"
                             aa (applicable state aa) (remove-fst state))
                     (handler-bind 
-                        ((assignment-error (rcurry #'describe *debug-io*))
-                         (negative-condition-matched (rcurry #'describe *debug-io*))
-                         (state-not-found (rcurry #'describe *debug-io*)))
+                        ((condition (lambda (c)
+                                      (format *debug-io* "~&because of:~%")
+                                      (describe c *debug-io*))))
                       (applicable state aa))))
                 :interactive-function
                 (named-lambda reader ()
