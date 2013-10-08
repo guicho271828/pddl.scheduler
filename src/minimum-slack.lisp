@@ -75,15 +75,16 @@
            ((timed-action (start (timed-state time)) duration)
             (multiple-value-bind (quotient remainder)
                 (floor time *truncate-width*)
-              (if (plusp duration)              
-                  (format nil "~a~a|~a|" 
-                          (* quotient *truncate-width*)
+              @ignorable quotient remainder
+              (if (plusp duration)
+                  (format nil "~4@a ~a|~a|"
+                          time
                           (make-string remainder
                                        :initial-element #\Space)
                           (make-string (1- (timed-action-duration ta))
                                        :initial-element #\-))
-                  (format nil "~a~a|"
-                          (* quotient *truncate-width*)
+                  (format nil "~4@a ~a|"
+                          time
                           (make-string remainder
                                        :initial-element #\Space)))))))
     (let ((*print-pretty* nil))
