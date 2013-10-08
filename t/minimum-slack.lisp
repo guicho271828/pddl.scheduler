@@ -17,3 +17,9 @@
     (filter-schedule
      (reschedule cell-assembly-model2a-2-1 :minimum-slack)
      :objects 'b-0)))
+
+;; regression test
+(test rover2435-1
+  (load-rovers)
+  (finishes
+    (reschedule roverprob2435-1 :minimum-slack)))

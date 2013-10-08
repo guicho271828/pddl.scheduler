@@ -14,6 +14,16 @@
     (%build-schedule plan)))
 
 
+@export 'timed-state
+@export 'timed-state-time
+@export 'timed-state-state
+@export '(action state time)
+(defstruct (timed-state
+             (:constructor timed-state (action state time)))
+  (action nil :type pddl-actual-action) ; the action just before the state
+  (state nil :type list)
+  (time nil :type number))
+
 @export 'timed-action
 @export 'timed-action-action
 @export 'timed-action-start
@@ -29,18 +39,10 @@
                                          start
                                          duration
                                          end)))
-  action
-  start
-  duration
-  end)
-
-@export 'timed-state
-@export 'timed-state-time
-@export 'timed-state-state
-@export '(action state time)
-(defstruct (timed-state
-             (:constructor timed-state (action state time)))
-  action state time)
+  (action nil :type pddl-actual-action)
+  (start nil :type timed-state)
+  (duration nil :type number)
+  (end nil :type timed-state))
 
 (defmethod print-object ((o timed-action) s)
   (match o
@@ -126,6 +128,23 @@
         (< (timed-state-time (timed-action-end ta1))
            (timed-state-time (timed-action-end ta2))))))))
 
+@export
+(defun sequencial-tss (plan)
+  (let* ((cost 0)
+         (aa (first-elt (actions plan))) ; initial action
+         (ts (timed-state
+              aa
+              (mapcar #'shallow-copy (init (problem plan)))
+              0))
+         (timed-states (list ts)))
+    (with-simulating-plan (env (pddl-environment :plan plan))
+      (let* ((new-cost (cost env))
+             (aa (elt (actions plan) (1- (index env)))))
+        ;(break+ new-cost duration aa)
+        (push (timed-state aa (states env) new-cost) timed-states)
+        (setf cost new-cost)))
+    (nreverse timed-states)))
+
 (defvar *plan*)
 
 @export
@@ -134,42 +153,41 @@
   (let* ((*domain* (domain *plan*))
          (*problem* (problem *plan*))
          (cost 0)
-         (aa (first-elt (actions *plan*)))
-         (ts (timed-state
-              aa
-              (mapcar #'shallow-copy (init (problem *plan*)))
-              0))
-         (timed-states (list ts))
-          ;; oldest action appears first
-         (aactions (list (timed-action aa ts 0 ts))))
+         (timed-states (sequencial-tss *plan*))
+         ;; oldest action appears first
+         (tas (list (timed-action (first-elt (actions *plan*))
+                                  (first timed-states)
+                                  0 (first timed-states)))))
     (with-simulating-plan (env (pddl-environment :plan *plan*))
       (let* ((new-cost (cost env))
              (duration (- new-cost cost))
              (aa (elt (actions *plan*) (1- (index env)))))
         (restart-bind ((draw-shrinked-plan
-                        (lambda ()
-                          (print-timed-action-graphically
-                           (reverse aactions) *debug-io*)))
+                        (curry #'print-timed-action-graphically
+                               (reverse tas) *debug-io*))
                        (draw-shrinked-plan-chronologically
-                        (lambda ()
-                          (print-timed-action-graphically
-                           (sort-timed-actions aactions)
-                           *debug-io*))))
+                        (curry #'print-timed-action-graphically
+                               (sort-timed-actions tas) *debug-io*)))
           (multiple-value-bind (new-timed-states new-timed-action)
-              (%insert-state aa duration timed-states)
+              (%insert-state
+               aa duration
+               (remove-if
+                (lambda (ts)
+                  (eq aa (timed-state-action ts)))
+                timed-states))
             (check-timed-action new-timed-action)
             (setf timed-states
                   (stable-sort new-timed-states
                                #'< :key #'timed-state-time))
-            (push new-timed-action aactions)))
-        (when *rescheduler-verbosity*
-          (format t "~%~%Sequencial plan No.~a" (1- (index env)))
-          (print aa)
-          (print (action (domain aa) aa))
-          (format t "~%current action length: ~a" (length aactions)))
+            (push new-timed-action tas)))
         (setf cost new-cost)))
-    ;(sort-timed-actions aactions)
-    (reverse aactions)))
+    (reverse tas)))
+
+;; (when *rescheduler-verbosity*
+;;   (format t "~%~%Sequencial plan No.~a" (1- (index env)))
+;;   (print aa)
+;;   (print (action (domain aa) aa))
+;;   (format t "~%current action length: ~a" (length aactions)))
 
 ;; recursive version
 (defun %insert-state (aa duration timed-states)
