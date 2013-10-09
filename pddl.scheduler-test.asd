@@ -13,6 +13,7 @@
   :depends-on (:pddl
 	       :pddl.scheduler
 	       :pddl.instances
+               :pddl.instances.rover
                :repl-utilities
                :pddl-test)
   :components ((:module "t"
