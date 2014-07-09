@@ -20,4 +20,6 @@
                 :components
                 ((:file :package)
                  (:file :minimum-slack))))
-  :perform (load-op :after (op c) (asdf:clear-system c)))
+  :perform (load-op :after (op c) 
+		    (eval (read-from-string "(fiveam:run! :pddl.scheduler)"))
+		    (asdf:clear-system c)))
