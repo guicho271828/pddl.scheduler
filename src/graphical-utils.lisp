@@ -14,7 +14,7 @@
      (lambda (ta)
        (match ta
          ((timed-action
-           (action (pddl-actual-action domain problem name parameters))
+           (action (pddl-ground-action domain problem name parameters))
            (start (timed-state (time start-time)))
            (end (timed-state (time end-time))))
           (and (<= start start-time)
