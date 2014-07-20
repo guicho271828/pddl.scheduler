@@ -13,7 +13,8 @@
         :pddl.instances
 	:pddl.plan-optimizer
         :pddl.scheduler)
-  (:shadow :fail :maximize :minimize))
+  (:shadow :fail)
+  (:shadowing-import-from :pddl  :maximize :minimize))
 (in-package :pddl.scheduler-test)
 
 (def-suite :pddl.scheduler)
