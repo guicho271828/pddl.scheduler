@@ -2,11 +2,6 @@
   This file is a part of pddl.scheduler project.
 |#
 
-(in-package :cl-user)
-(defpackage pddl.scheduler-asd
-  (:use :cl :asdf))
-(in-package :pddl.scheduler-asd)
-
 (defsystem pddl.scheduler
   :version "0.1"
   :author ""
