@@ -15,7 +15,7 @@
       (s nil
          :per-line-prefix
          (ematch ta
-           ((timed-action (start (timed-state time)) duration)
+           ((timed-action _  (timed-state _ _ time) duration _)
             (multiple-value-bind (quotient remainder)
                 (floor time *truncate-width*)
               @ignorable quotient remainder
@@ -47,9 +47,10 @@
      (lambda (ta)
        (match ta
          ((timed-action
-           (action (pddl-ground-action domain problem name parameters))
-           (start (timed-state (time start-time)))
-           (end (timed-state (time end-time))))
+           (pddl-ground-action domain problem name parameters)
+           (timed-state _ _ start-time)
+           _
+           (timed-state _ _ end-time))
           (and (<= start start-time)
                (<= end-time end)
                (if actions

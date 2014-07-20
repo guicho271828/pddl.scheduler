@@ -122,7 +122,7 @@
 
 (defun %insert-state-inner (ga duration earliest end rest acc)
   (ematch rest
-    ((list* (and ts2 (timed-state state time)) rest2)
+    ((list* (and ts2 (timed-state _ state time)) rest2)
      (cond
        ((< time end)
         ;; checks during the time span
@@ -256,7 +256,7 @@
     (when (every
            (lambda (ts)
              (match ts
-               ((timed-state action time)
+               ((timed-state action _ time)
                 (assert (<= end time))
                 (when (applicable merged-next action)
                   (setf merged-next (apply-ground-action action merged-next))

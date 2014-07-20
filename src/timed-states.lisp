@@ -11,7 +11,13 @@
              (:constructor timed-state (action state time)))
   (action nil :type pddl-actual-action) ; the action just before the state
   (state nil :type list)
-  (time nil :type number))
+  (time 0 :type number))
+
+(defpattern timed-state (action state time)
+  `(structure timed-state-
+              (action ,action)
+              (state ,state)
+              (time ,time)))
 
 @export 'timed-action
 @export 'timed-action-action
@@ -33,16 +39,24 @@
   (duration nil :type number)
   (end nil :type timed-state))
 
+(defpattern timed-action (action start duration end)
+  `(structure timed-action-
+              (action ,action)
+              (start ,start)
+              (duration ,duration)
+              (end ,end)))
+
 (defmethod print-object ((o timed-action) s)
   (match o
-    ((timed-action action duration
-                   (start (timed-state time))
-                   (end (timed-state (time time2))))
-     (format s "(TA ~w :start ~a :end ~a :dt ~a)"
+    ((timed-action action
+                   (timed-state _ _ time _)
+                   duration
+                   (timed-state _ _ time2 _))
+     (format s "(TA ~w :t1 ~a :t2 ~a :dt ~a)"
              action time time2 duration))))
 
 (defmethod print-object ((o timed-state) s)
   (match o
-    ((timed-state time action)
-     (format s "(TS :time ~w :action ~w)"
+    ((timed-state action _ time)
+     (format s "(TS :t ~w :action ~w)"
              time action))))
