@@ -263,7 +263,14 @@
 ;; by applying the same action sequence after * to (a)
 ;; then it is feasible to insert (a) between * and ?.
 ;; this is checked by %check-after-end-time.
-;; 
+;;
+;; after %check-after-end-time. all ?s are merged  to (a).
+;;
+;;       acc<<|            |time
+;; --x-----*--*-\ /--------?--?--?--?--?--...
+;;         *----(a)        |>>rest
+;; earliest|     |end,new
+;;
 (defun %check-after-end-time (ga end rest acc)
   ;; check the states after the time span.
   ;; returns a list of timed-state in the chlonological order.
