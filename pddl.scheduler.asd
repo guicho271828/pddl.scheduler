@@ -17,15 +17,14 @@
                :iterate
                :alexandria
                :optima
-               :cl-syntax-annot
-               :anaphora
-               :fiveam
-               :metatilities)
+               :cl-syntax-annot)
   :components ((:file :package :pathname "src/package")
 	       (:module "src"
 		:depends-on (:package)
                 :components
-                ((:file :minimum-slack)
+                ((:file :interface)
+                 (:file :timed-states)
+                 (:file :minimum-slack)
 		 (:file :graphical-utils))))
   :description ""
   :long-description

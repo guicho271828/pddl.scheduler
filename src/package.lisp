@@ -6,13 +6,12 @@
 (defpackage pddl.scheduler
   (:use :cl
         :pddl
-        :plan-optimizer
+        :pddl.plan-optimizer
         :guicho-utilities
         :iterate
         :alexandria
         :optima
-        :cl-syntax
-        :anaphora)
+        :cl-syntax)
   (:shadowing-import-from :iterate :maximize :minimize))
 (in-package :pddl.scheduler)
 

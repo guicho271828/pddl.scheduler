@@ -10,12 +10,14 @@
 (defsystem pddl.scheduler-test
   :author ""
   :license ""
-  :depends-on (:pddl
+  :depends-on (:alexandria
+               :iterate
+               :optima
+               :fiveam
+               :pddl
 	       :pddl.scheduler
 	       :pddl.instances
-               :pddl.instances.rover
-               :repl-utilities
-               :pddl-test)
+               :pddl.instances.rover)
   :components ((:module "t"
                 :components
                 ((:file :package)

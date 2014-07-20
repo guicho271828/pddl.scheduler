@@ -5,20 +5,18 @@
 (in-package :cl-user)
 (defpackage pddl.scheduler-test
   (:use :cl
-	:pddl.instances
 	:alexandria
-	:pddl
 	:iterate
-	:repl-utilities
-	:plan-optimizer
-        :pddl.scheduler
-        :pddl.instances
 	:optima
-	:fiveam)
+	:fiveam
+	:pddl
+        :pddl.instances
+	:pddl.plan-optimizer
+        :pddl.scheduler)
   (:shadow :fail :maximize :minimize))
 (in-package :pddl.scheduler-test)
 
-(def-suite :pddl.scheduler :in :pddl)
+(def-suite :pddl.scheduler)
 (in-suite :pddl.scheduler)
 
 ;; blah blah blah.
