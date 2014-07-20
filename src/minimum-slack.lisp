@@ -6,7 +6,7 @@
 
 (defun check-timed-action (new-timed-action)
   (when *rescheduler-verbosity*
-    (format t "~%inserted new action with t = [~a,~a] ,dt = ~a ."
+    (format t "~%inserted a new action with t = [~a,~a] ,dt = ~a ."
             (timed-state-time 
              (timed-action-start new-timed-action))
             (timed-state-time 
