@@ -4,6 +4,9 @@
 ;; implement minimum slack scheduler, a kind of scheduler based on the
 ;; greedy algorithm.
 
+(defvar *plan*)
+(defun draw-handler (tas)
+  (print-timed-action-graphically tas *debug-io*))
 (defun check-timed-action (new-timed-action)
   (when *rescheduler-verbosity*
     (format t "~%inserted a new action with t = [~a,~a] ,dt = ~a ."
@@ -39,80 +42,98 @@
         (< (timed-state-time (timed-action-end ta1))
            (timed-state-time (timed-action-end ta2))))))))
 
-@export
-(defun sequencial-tss (plan)
-  (let* ((cost 0)
-         (ga (first-elt (actions plan))) ; initial action
-         (ts (timed-state
-              ga
-              (mapcar #'shallow-copy (init (problem plan)))
-              0))
-         (timed-states (list ts)))
+(defun sequencial-schedule (plan)
+  "Converts a pddl-plan object into a list of timed-state"
+  (let* ((initial-timed-state (timed-state nil (init (problem plan)) 0))
+         (timed-states (list initial-timed-state))
+         (timed-actions (list (timed-action nil initial-timed-state
+                                            0   initial-timed-state)))
+         (prev-cost 0)
+         (prev-timed-state initial-timed-state))
     (with-simulating-plan (env (pddl-environment :plan plan))
-      (let* ((new-cost (cost env))
-             (ga (elt (actions plan) (1- (index env)))))
-        ;(break+ new-cost duration ga)
-        (push (timed-state ga (states env) new-cost) timed-states)
-        (setf cost new-cost)))
-    (nreverse timed-states)))
+      (let* ((cost (cost env))
+             (duration (- cost prev-cost))
+             (action (elt (actions plan) (1- (index env))))
+             (state (states env))
+             (timed-state
+              (timed-state action state cost))
+             (timed-action
+              (timed-action action prev-timed-state duration timed-state)))
+        (push timed-state timed-states)
+        (push timed-action timed-actions)
+        (setf prev-cost cost
+              prev-timed-state timed-state)))
+    (values
+     (nreverse timed-states)
+     (nreverse timed-actions))))
 
-(defvar *plan*)
+;; @export
+;; (defun %build-schedule (*plan*)
+;;   @type pddl-plan *plan*
+;;   (let* ((tas (list (timed-action (first-elt (actions *plan*))
+;;                                   nil 0 (first timed-states)))))
+;;     (with-simulating-plan (env (pddl-environment :plan *plan*))
+;;       (let* ((aa (elt (actions *plan*) (1- (index env)))))
+;;         (restart-bind ((draw-shrinked-plan
+;;                         (lambda () (draw-handler tas)))
+;;                        (draw-shrinked-plan-chronologically
+;;                         (lambda () (draw-handler (sort-timed-actions tas)))))
+;;           (multiple-value-bind (new-timed-states new-timed-action)
+;;               (%insert-state
+;;                aa duration
+;;                (remove-if
+;;                 (lambda (ts)
+;;                   (eq aa (timed-state-action ts)))
+;;                 timed-states))
+;;             (check-timed-action new-timed-action)
+;;             (setf timed-states
+;;                   (stable-sort new-timed-states
+;;                                #'< :key #'timed-state-time))
+;;             (push new-timed-action tas)))))
+;;     (nreverse tas)))
 
-(defun draw-handler (tas)
-  (print-timed-action-graphically tas *debug-io*))
 
 @export
 (defun %build-schedule (*plan*)
-  @type pddl-plan *plan*
   (let* ((*domain* (domain *plan*))
-         (*problem* (problem *plan*))
-         (cost 0)
-         (timed-states (sequencial-tss *plan*))
-         ;; oldest action appears first
-         (tas (list (timed-action (first-elt (actions *plan*))
-                                  (first timed-states)
-                                  0 (first timed-states)))))
-    (with-simulating-plan (env (pddl-environment :plan *plan*))
-      (let* ((new-cost (cost env))
-             (duration (- new-cost cost))
-             (ga (elt (actions *plan*) (1- (index env)))))
-        (restart-bind ((draw-shrinked-plan
-                        (lambda () (draw-handler tas)))
-                       (draw-shrinked-plan-chronologically
-                        (lambda () (draw-handler (sort-timed-actions tas)))))
-          (multiple-value-bind (new-timed-states new-timed-action)
-              (%insert-state
-               ga duration
-               (remove-if
-                (lambda (ts)
-                  (eq ga (timed-state-action ts)))
-                timed-states))
-            (check-timed-action new-timed-action)
-            (setf timed-states
-                  (stable-sort new-timed-states
-                               #'< :key #'timed-state-time))
-            (push new-timed-action tas))
-          (setf cost new-cost))))
-    (nreverse tas)))
+         (*problem* (problem *plan*)))
+    (multiple-value-bind (tss tas) (sequencial-schedule *plan*)
+      (restart-bind ((draw-shrinked-plan
+                      (lambda () (draw-handler tas)))
+                     (draw-shrinked-plan-chronologically
+                      (lambda () (draw-handler (sort-timed-actions tas)))))
+        (iter (for ta in tas)
+              (ematch ta
+                ((timed-action a _ duration _)
+                 (multiple-value-bind (new-tss new-ta)
+                     (%insert-state a duration tss)
+                   (check-timed-action new-ta)
+                   (setf tss (stable-sort new-tss #'< :key #'timed-state-time))
+                   (collect new-ta)))))))))
 
-;; (when *rescheduler-verbosity*
-;;   (format t "~%~%Sequencial plan No.~a" (1- (index env)))
-;;   (print ga)
-;;   (print (action (domain ga) ga))
-;;   (format t "~%current action length: ~a" (length gactions)))
-
-;; recursive version
-(defun %insert-state (ga duration timed-states)
-  (%insert-state-rec ga duration timed-states nil))
 
 (defun remove-fst (states)
-  (remove-if (of-type 'pddl-function-state)
-             states))
+  "Removes function states"
+  (remove-if (of-type 'pddl-function-state) states))
+
+;; ga = grounded action
+
+;; recursive version
+
+(defun %insert-state (ga duration timed-states)
+  (%insert-state-rec
+   ga
+   duration
+   ;; remove itself -- therefore it should be applicable at some point
+   ;; (the point it used to be)
+   (remove ga timed-states :key #'timed-state-action)
+   nil))
 
 (defun %insert-state-rec (ga duration rest acc)
   (match rest
-    ((list* (and ts (timed-state state time)) rest2)
-     (if (applicable state ga)
+    ((list* (and ts (timed-state _ state time)) rest2)
+     (if (or (null ga) ;; initial action is nil, and it is always applicable
+             (applicable state ga))
          (if rest2
              (%insert-state-inner
               ga duration ts (+ time duration) rest2 (cons ts acc))
@@ -246,11 +267,14 @@
 (defun %check-after-end-time (ga end rest acc)
   ;; check the states after the time span.
   ;; returns a list of timed-state in the chlonological order.
-  (assert (applicable (timed-state-state (car acc)) ga))
+  (assert (or (null ga)
+              (applicable (timed-state-state (car acc)) ga)))
   (assert (<= (timed-state-time (car acc))
               (timed-state-time (car rest))))
-  (let* ((merged-next (apply-ground-action
-                       ga (timed-state-state (car acc))))
+  (let* ((merged-next
+          (if ga
+              (apply-ground-action ga (timed-state-state (car acc)))
+              (timed-state-state (car acc)))) ;; because it is the initial state
          (new (timed-state ga merged-next end))
          (merged nil))
     (when (every

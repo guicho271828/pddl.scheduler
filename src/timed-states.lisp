@@ -9,7 +9,7 @@
 @export '(action state time)
 (defstruct (timed-state
              (:constructor timed-state (action state time)))
-  (action nil :type pddl-actual-action) ; the action just before the state
+  (action nil :type (or null pddl-ground-action)) ; the action just before the state
   (state nil :type list)
   (time 0 :type number))
 
@@ -34,7 +34,7 @@
                                          start
                                          duration
                                          end)))
-  (action nil :type pddl-actual-action)
+  (action nil :type (or null pddl-ground-action))
   (start nil :type timed-state)
   (duration nil :type number)
   (end nil :type timed-state))
