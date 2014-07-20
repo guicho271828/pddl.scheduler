@@ -14,14 +14,16 @@
       (:types machine step product)
       (:predicates (available ?m - machine)
                    (use ?m - machine ?s - step)
+                   (notusing ?p - product)
                    (using ?m - machine ?p - product)
                    (made ?p - product ?step - step))
       (:functions (total-cost)
                   (span ?p - product ?s - step))
       (:action start
 	       :parameters (?p - product ?s - step ?m - machine)
-	       :precondition (and (available ?m) (use ?m ?s))
+	       :precondition (and (available ?m) (use ?m ?s) (notusing ?p))
 	       :effect (and (using ?m ?p)
+                            (not (notusing ?p))
                             (not (available ?m))
                             (increase (total-cost) 1)))
       (:action make
@@ -33,6 +35,7 @@
 	       :parameters (?p - product ?s - step ?m - machine)
 	       :precondition (and (using ?m ?p) (made ?p ?s))
 	       :effect (and (not (using ?m ?p))
+                            (notusing ?p)
                             (available ?m)
                             (increase (total-cost) 1)))))
   (finishes
@@ -41,6 +44,8 @@
       (:objects m1 m2 - machine p1 p2 - product s0 s1 s2 - step)
       (:init (made p1 s0)
              (made p2 s0)
+             (notusing p1)
+             (notusing p2)
              (available m1)
              (available m2)
              (use m1 s1)
@@ -76,9 +81,11 @@
       (is (= 21 (cost last-env)))
       (is-true (goal-p makep (states last-env)))
 
-      (finishes
-        (print-timed-action-graphically
-         (reschedule plan :minimum-slack :verbose t))))))
+      (let (sc)
+        (finishes
+          (setf sc (reschedule plan :minimum-slack :verbose t))
+          (print-timed-action-graphically sc))
+        (is (= 17 (timed-state-time (timed-action-end (lastcar sc)))))))))
 
 
 (test build-schedule

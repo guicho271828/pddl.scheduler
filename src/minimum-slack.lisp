@@ -102,7 +102,7 @@
                       (lambda () (draw-handler tas)))
                      (draw-shrinked-plan-chronologically
                       (lambda () (draw-handler (sort-timed-actions tas)))))
-        (iter (for ta in tas)
+        (iter (for ta in (cdr tas))
               (ematch ta
                 ((timed-action a _ duration _)
                  (multiple-value-bind (new-tss new-ta)
@@ -132,8 +132,7 @@
 (defun %insert-state-rec (ga duration rest acc)
   (match rest
     ((list* (and ts (timed-state _ state time)) rest2)
-     (if (or (null ga) ;; initial action is nil, and it is always applicable
-             (applicable state ga))
+     (if (applicable state ga)
          (if rest2
              (%insert-state-inner
               ga duration ts (+ time duration) rest2 (cons ts acc))
@@ -274,8 +273,7 @@
 (defun %check-after-end-time (ga end rest acc)
   ;; check the states after the time span.
   ;; returns a list of timed-state in the chlonological order.
-  (assert (or (null ga)
-              (applicable (timed-state-state (car acc)) ga)))
+  (assert (applicable (timed-state-state (car acc)) ga))
   (assert (<= (timed-state-time (car acc))
               (timed-state-time (car rest))))
   (let* ((merged-next

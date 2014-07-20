@@ -49,9 +49,9 @@
 (defmethod print-object ((o timed-action) s)
   (match o
     ((timed-action action
-                   (timed-state _ _ time _)
+                   (timed-state _ _ time)
                    duration
-                   (timed-state _ _ time2 _))
+                   (timed-state _ _ time2))
      (format s "(TA ~w :t1 ~a :t2 ~a :dt ~a)"
              action time time2 duration))))
 
