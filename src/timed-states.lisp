@@ -4,6 +4,7 @@
 ;; defines timed-state and timed-action
 
 @export 'timed-state
+@export 'timed-state-p
 @export 'timed-state-time
 @export 'timed-state-state
 @export '(action state time)
@@ -20,15 +21,13 @@
               (time ,time)))
 
 @export 'timed-action
+@export 'timed-action-p
 @export 'timed-action-action
 @export 'timed-action-start
 @export 'timed-action-duration
 @export 'timed-action-end
 @export 'timed-action-successor-state
-@export '(action 
-          start
-          duration
-          end)
+@export '(action start duration end)
 (defstruct (timed-action
              (:constructor timed-action (action 
                                          start
