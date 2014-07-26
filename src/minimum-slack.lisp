@@ -93,8 +93,6 @@
 ;;             (push new-timed-action tas)))))
 ;;     (nreverse tas)))
 
-
-@export
 (defun %build-schedule (*plan*)
   (let* ((*domain* (domain *plan*))
          (*problem* (problem *plan*)))
