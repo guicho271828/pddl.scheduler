@@ -45,28 +45,28 @@
 
 (defun sequencial-schedule (plan)
   "Converts a pddl-plan object into a list of timed-state"
-  (let* ((initial-timed-state (timed-state nil (init (problem plan)) 0))
-         (timed-states (list initial-timed-state))
-         (timed-actions (list (timed-action nil initial-timed-state
-                                            0   initial-timed-state)))
-         (prev-cost 0)
-         (prev-timed-state initial-timed-state))
+  (let* (tss tas (prev-cost 0) prev-ts)
     (with-simulating-plan (env (pddl-environment :plan plan))
       (let* ((cost (cost env))
              (duration (- cost prev-cost))
-             (action (elt (actions plan) (1- (index env))))
-             (state (states env))
-             (timed-state
-              (timed-state action state cost))
-             (timed-action
-              (timed-action action prev-timed-state duration timed-state)))
-        (push timed-state timed-states)
-        (push timed-action timed-actions)
-        (setf prev-cost cost
-              prev-timed-state timed-state)))
+             (state (states env)))
+        (cond
+          ((zerop (index env))
+           (let* ((ts (timed-state nil state cost))
+                  (ta (timed-action nil ts duration ts)))
+             (push ts tss)
+             (push ta tas)
+             (setf prev-cost cost prev-ts ts)))
+          (t
+           (let* ((action (elt (actions plan) (1- (index env))))
+                  (ts (timed-state action state cost))
+                  (ta (timed-action action prev-ts duration ts)))
+             (push ts tss)
+             (push ta tas)
+             (setf prev-cost cost prev-ts ts))))))
     (values
-     (nreverse timed-states)
-     (nreverse timed-actions))))
+     (nreverse tss)
+     (nreverse tas))))
 
 ;; @export
 ;; (defun %build-schedule (*plan*)
