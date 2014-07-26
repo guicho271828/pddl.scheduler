@@ -28,9 +28,10 @@
           (timed-action-duration new-timed-action)
           new-timed-action))
 
-(defun sort-timed-actions (ground-actions)
+@export
+(defun sort-schedule (schedule)
   (stable-sort
-   (copy-seq ground-actions)
+   (copy-seq schedule)
    (lambda (ta1 ta2)
      (cond 
        ((< (timed-state-time (timed-action-start ta1))
