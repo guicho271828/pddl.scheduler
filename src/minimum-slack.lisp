@@ -129,7 +129,7 @@
    nil))
 
 (defun %insert-state-rec (ga duration rest acc)
-  (match rest
+  (ematch rest
     ((list* (and ts (timed-state _ state time)) rest2)
      (if (applicable state ga)
          (if rest2
@@ -283,7 +283,7 @@
          (merged nil))
     (when (every
            (lambda (ts)
-             (match ts
+             (ematch ts
                ((timed-state action _ time)
                 (assert (<= end time))
                 (when (applicable merged-next action)
