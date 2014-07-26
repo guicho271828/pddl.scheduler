@@ -10,9 +10,7 @@
                :optima
                :fiveam
                :pddl
-	       :pddl.scheduler
-	       :pddl.instances
-               :pddl.instances.rover)
+	       :pddl.scheduler)
   :components ((:module "t"
                 :components
                 ((:file :package)

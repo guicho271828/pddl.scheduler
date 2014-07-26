@@ -10,7 +10,6 @@
 	:optima
 	:fiveam
 	:pddl
-        :pddl.instances
 	:pddl.plan-optimizer
         :pddl.scheduler)
   (:shadow :fail)
