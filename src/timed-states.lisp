@@ -7,6 +7,7 @@
 @export 'timed-state-p
 @export 'timed-state-time
 @export 'timed-state-state
+@export 'timed-state-action
 @export '(action state time)
 (defstruct (timed-state
              (:constructor timed-state (action state time)))
@@ -26,7 +27,6 @@
 @export 'timed-action-start
 @export 'timed-action-duration
 @export 'timed-action-end
-@export 'timed-action-successor-state
 @export '(action start duration end)
 (defstruct (timed-action
              (:constructor timed-action (action 
