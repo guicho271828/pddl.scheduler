@@ -68,31 +68,6 @@
      (nreverse tss)
      (nreverse tas))))
 
-;; @export
-;; (defun %build-schedule (*plan*)
-;;   @type pddl-plan *plan*
-;;   (let* ((tas (list (timed-action (first-elt (actions *plan*))
-;;                                   nil 0 (first timed-states)))))
-;;     (with-simulating-plan (env (pddl-environment :plan *plan*))
-;;       (let* ((aa (elt (actions *plan*) (1- (index env)))))
-;;         (restart-bind ((draw-shrinked-plan
-;;                         (lambda () (draw-handler tas)))
-;;                        (draw-shrinked-plan-chronologically
-;;                         (lambda () (draw-handler (sort-timed-actions tas)))))
-;;           (multiple-value-bind (new-timed-states new-timed-action)
-;;               (%insert-state
-;;                aa duration
-;;                (remove-if
-;;                 (lambda (ts)
-;;                   (eq aa (timed-state-action ts)))
-;;                 timed-states))
-;;             (check-timed-action new-timed-action)
-;;             (setf timed-states
-;;                   (stable-sort new-timed-states
-;;                                #'< :key #'timed-state-time))
-;;             (push new-timed-action tas)))))
-;;     (nreverse tas)))
-
 (defun %build-schedule (*plan*)
   (let* ((*domain* (domain *plan*))
          (*problem* (problem *plan*)))
@@ -100,7 +75,7 @@
       (restart-bind ((draw-shrinked-plan
                       (lambda () (draw-handler tas)))
                      (draw-shrinked-plan-chronologically
-                      (lambda () (draw-handler (sort-timed-actions tas)))))
+                      (lambda () (draw-handler (sort-schedule tas)))))
         (iter (for ta in (cdr tas))
               (ematch ta
                 ((timed-action a _ duration _)
@@ -304,7 +279,7 @@
                 (named-lambda describer (n)
                   (let ((state (timed-state-state (nth n (append rest acc)))))
                     (format t "~%~w is ~:[not~;~] applicable to~%~w"
-                            ga (applicable state ga) (remove-fst state))
+                            ga (applicable state ga) state)
                     (handler-bind 
                         ((condition (lambda (c)
                                       (format *debug-io* "~&because of:~%")
@@ -322,8 +297,8 @@
                ~%~a~
                ~%not checked yet:~%~:{n: ~w time: ~w action:~w~%~}~
                ~%already checked:~%~:{n: ~w time: ~w action:~w~%~}"
-             (path *plan*)
-             (path *problem*)
+             (ignore-errors (path *plan*))
+             (ignore-errors (path *problem*))
              ga 
              (mapcar fn rest)
              (mapcar fn acc)))))
