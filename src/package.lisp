@@ -6,7 +6,6 @@
 (defpackage pddl.scheduler
   (:use :cl
         :pddl
-        :pddl.plan-optimizer
         :guicho-utilities
         :iterate
         :alexandria

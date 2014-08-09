@@ -7,7 +7,6 @@
   :author ""
   :license ""
   :depends-on (:pddl
-	       :pddl.plan-optimizer
                :guicho-utilities
                :iterate
                :alexandria

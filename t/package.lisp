@@ -10,7 +10,6 @@
 	:optima
 	:fiveam
 	:pddl
-	:pddl.plan-optimizer
         :pddl.scheduler)
   (:shadow :fail)
   (:shadowing-import-from :pddl  :maximize :minimize))
